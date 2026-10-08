@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=445, height=300">
+    <title>moodboard-estilos · célula 01</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="../_fontes/moodboard-estilos/compositions/lib/dots.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; background: #0b0b0f; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b0b0f; font-family: Montserrat, sans-serif; color: #fff; }
+      .hd { position: absolute; left: 40px; top: 38px; font-weight: 800; font-size: 22px; letter-spacing: 0.22em; }
+      .hd2 { position: absolute; right: 40px; top: 42px; font-weight: 600; font-size: 14px; letter-spacing: 0.18em; color: #8a8a96; }
+      .cell { position: absolute; width: 445px; height: 300px; border-radius: 14px; overflow: hidden; background: #15151c; }
+      .st { position: absolute; left: 0; top: 0; width: 445px; height: 260px; overflow: hidden; }
+      .lb { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: #15151c; }
+      .lb b { font-weight: 800; font-size: 13px; letter-spacing: 0.14em; }
+      .lb b i { font-style: normal; color: #8a8a96; margin-right: 8px; }
+      .lb span { font-weight: 600; font-size: 11px; letter-spacing: 0.1em; color: #8a8a96; }
+      .abs { position: absolute; }
+      svg { position: absolute; left: 0; top: 0; }
+
+      /* 4 — texto cinético */
+      .k4 { position: absolute; inset: 0; background: #facc15; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+      .k4 .w { font-weight: 900; font-size: 58px; line-height: 1; letter-spacing: -0.02em; color: #111; opacity: 0; }
+      .k4 .w.g { background: linear-gradient(90deg, #e11d48, #7c3aed, #e11d48); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+      /* 5 — texto 3D */
+      .s5 { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, #0f3a5f, #07182b); perspective: 640px; }
+      .stack { position: absolute; left: 72px; top: 80px; width: 300px; height: 100px; transform-style: preserve-3d; }
+      .layer { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; font-size: 78px; letter-spacing: 0.02em; }
+      /* 6 — contador */
+      .s6 { position: absolute; inset: 0; background: #f4f1ff; }
+      .num { position: absolute; left: 28px; top: 46px; font-weight: 900; font-size: 74px; color: #5b21b6; letter-spacing: -0.03em; }
+      .sub { position: absolute; left: 32px; top: 134px; font-weight: 700; font-size: 13px; letter-spacing: 0.14em; color: #5f4f94; }
+      .bars { position: absolute; right: 30px; bottom: 30px; width: 190px; height: 190px; display: flex; align-items: flex-end; gap: 10px; }
+      .bar { flex: 1; border-radius: 6px 6px 0 0; background: linear-gradient(#8b5cf6, #5b21b6); transform-origin: 50% 100%; }
+      /* 7 — câmera */
+      .s7 { position: absolute; inset: 0; background: #05060a; }
+      .cam { position: absolute; inset: 0; perspective: 240px; perspective-origin: 50% 25%; }
+      .plane { position: absolute; left: -70%; width: 240%; top: 30%; height: 260%; transform-origin: 50% 0; transform: rotateX(74deg); background: radial-gradient(circle at center, #38bdf8 0 1.8px, transparent 2.6px) 0 0 / 22px 22px; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%); mask-image: linear-gradient(to bottom, transparent 0%, #000 45%); }
+      .glow7 { position: absolute; left: 0; right: 0; top: 0; height: 100px; background: radial-gradient(ellipse at 50% 100%, rgba(124, 58, 237, 0.75), transparent 70%); top: 22px; }
+      .orb { position: absolute; border-radius: 50%; filter: blur(6px); }
+      /* 8 — glitch */
+      .s8 { position: absolute; inset: 0; background: #000; }
+      .gt { position: absolute; left: 0; right: 0; top: 94px; text-align: center; font-weight: 900; font-size: 44px; letter-spacing: 0.02em; }
+      .gr { color: #ff2a55; mix-blend-mode: screen; }
+      .gc { color: #00e5ff; mix-blend-mode: screen; }
+      .gw { color: #fff; }
+      .scan { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 4px); pointer-events: none; }
+      .slice { position: absolute; left: 0; right: 0; height: 12px; background: rgba(255,255,255,0.18); opacity: 0; }
+      /* 9 — voz */
+      .s9 { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, #0b3d36, #031a17); }
+      /* 10 — transições */
+      .p10 { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; font-size: 58px; letter-spacing: 0.04em; }
+      .tcap { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-weight: 800; font-size: 11px; letter-spacing: 0.2em; color: #fff; opacity: 0; background: rgba(0,0,0,0.6); width: max-content; margin: 0 auto; padding: 4px 10px; border-radius: 6px; left: 50%; right: auto; transform: translateX(-50%); }
+      /* 11 — clip-path */
+      .s11 { position: absolute; inset: 0; background: #1c1917; }
+      .blk { position: absolute; left: 22px; top: 22px; right: 22px; bottom: 22px; background: linear-gradient(135deg, #f59e0b, #ef4444); clip-path: inset(0 100% 0 0); }
+      .t11 { position: absolute; left: 50px; font-weight: 900; font-size: 58px; line-height: 1; color: #1c1917; letter-spacing: -0.03em; clip-path: inset(0 0 100% 0); }
+      /* 12 — cards */
+      .s12 { position: absolute; inset: 0; background: #e0e7ff; }
+      .card { position: absolute; left: 40px; width: 365px; height: 62px; border-radius: 14px; background: #fff; box-shadow: 0 6px 18px rgba(67, 56, 202, 0.18); display: flex; align-items: center; gap: 14px; padding: 0 16px; opacity: 0; }
+      .card i { width: 30px; height: 30px; border-radius: 50%; flex: none; }
+      .card b { font-weight: 800; font-size: 14px; color: #1e1b4b; display: block; }
+      .card span { font-weight: 600; font-size: 11px; color: #4338ca; }
+    </style>
+    <style>#root { width: 445px !important; height: 300px !important; }</style>
+  </head>
+  <body>
+    <div data-hf-id="hf-9hlr" id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="445" data-height="300">
+    </div>
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const root = document.getElementById("root");
+      const L = 4, LOOPS = 3;
+      const tl = gsap.timeline({ paused: true });
+      const ft = (tg, a, b, p) => tl.fromTo(tg, a, { ...b, immediateRender: false }, p);
+      const svgEl = (w, h) => { const s = document.createElementNS(NS, "svg"); s.setAttribute("width", w); s.setAttribute("height", h); s.setAttribute("viewBox", `0 0 ${w} ${h}`); return s; };
+      const mk = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+
+      const cells = [];
+      function cell(n, name, tech, build) { cells.push({ n, name, tech, build }); }
+
+      /* 01 — Pontilhado: morph de partículas (pessoa → seta) */
+      cell("01", "PONTILHADO", "DOTS.fill · morph de partículas", (st) => {
+        st.style.background = "#0a0a0a";
+        const svg = svgEl(445, 260); st.appendChild(svg);
+        const byYX = (a, b) => a.y - b.y || a.x - b.x;
+        const A = DOTS.fill(DOTS.SHAPES.person, { step: 15, ox: 164, oy: 14, s: 0.58 }).sort(byYX);
+        const B = DOTS.fill(DOTS.SHAPES.arrow, { step: 15, ox: 164, oy: 36, s: 0.58 }).sort(byYX);
+        const N = A.length;
+        const tgt = A.map((_, i) => B[Math.min(B.length - 1, Math.floor((i * B.length) / N))]);
+        A.forEach((p) => { if (p.y < 52) p.color = "#ff7a1a"; });
+        const cs = DOTS.draw(svg, A, { r: 3.6 });
+        gsap.set(cs, { transformOrigin: "50% 50%" });
+        const dx = A.map((p, i) => tgt[i].x - p.x), dy = A.map((p, i) => tgt[i].y - p.y);
+        return (t0) => {
+          ft(cs, { x: 0, y: 0 }, { x: (i) => dx[i], y: (i) => dy[i], duration: 1, ease: "power3.inOut", stagger: { each: 0.004 } }, t0 + 0.7);
+          ft(cs, { x: (i) => dx[i], y: (i) => dy[i] }, { x: 0, y: 0, duration: 1, ease: "power3.inOut", stagger: { each: 0.004 } }, t0 + 2.4);
+        };
+      });
+
+      /* 02 — Dispersão e remontagem */
+      cell("02", "DISPERSÃO", "depth-scatter-assemble · burst", (st) => {
+        st.style.background = "radial-gradient(circle at 50% 45%, #2a1257, #0d0620)";
+        const svg = svgEl(445, 260); st.appendChild(svg);
+        const pts = DOTS.text("IA", { size: 150, step: 9, cx: 222, cy: 130 });
+        pts.forEach((p, i) => { p.color = i % 4 === 0 ? "#f5d0fe" : i % 2 ? "#22d3ee" : "#e879f9"; });
+        const cs = DOTS.draw(svg, pts, { r: 3.3 });
+        gsap.set(cs, { transformOrigin: "50% 50%", opacity: 0 });
+        const rnd = DOTS.rand(21);
+        const sx = pts.map(() => (rnd() - 0.5) * 560), sy = pts.map(() => (rnd() - 0.5) * 340);
+        const bx = pts.map(() => (rnd() - 0.5) * 420), by = pts.map(() => (rnd() - 0.5) * 300);
+        return (t0) => {
+          ft(cs, { x: (i) => sx[i], y: (i) => sy[i], opacity: 0, scale: 0.3 }, { x: 0, y: 0, opacity: 1, scale: 1, duration: 1.1, ease: "power3.out", stagger: { each: 0.003 } }, t0 + 0.1);
+          ft(cs, { x: 0, y: 0, opacity: 1, scale: 1 }, { x: (i) => bx[i], y: (i) => by[i], opacity: 0, scale: 0.4, duration: 0.9, ease: "power2.in", stagger: { each: 0.002 } }, t0 + 2.7);
+        };
+      });
+
+      /* 03 — Traço SVG desenhando */
+      cell("03", "TRAÇO SVG", "svg-path-draw · stroke-dashoffset", (st) => {
+        st.style.background = "#f5efe3";
+        const svg = svgEl(445, 260); st.appendChild(svg);
+        const defs = [
+          ["M222,52 C172,52 152,100 177,134 C192,154 197,164 197,180 L247,180 C247,164 252,154 267,134 C292,100 272,52 222,52 Z", "#1a1a1a", 5],
+          ["M203,198 L241,198 M208,212 L236,212 M214,226 L230,226", "#1a1a1a", 5],
+          ["M222,16 L222,32 M144,62 L156,72 M300,62 L288,72 M116,124 L134,124 M328,124 L310,124", "#ff5a4f", 5],
+          ["M60,236 C100,214 130,252 170,232 S250,218 290,238 S360,226 392,236", "#ff5a4f", 4],
+        ];
+        const ps = defs.map(([d, c, w]) => {
+          const p = document.createElementNS(NS, "path");
+          p.setAttribute("d", d); p.setAttribute("pathLength", "1"); p.setAttribute("fill", "none");
+          p.setAttribute("stroke", c); p.setAttribute("stroke-width", w); p.setAttribute("stroke-linecap", "round"); p.setAttribute("stroke-linejoin", "round");
+          p.style.strokeDasharray = "1 1"; p.style.strokeDashoffset = "1";
+          svg.appendChild(p); return p;
+        });
+        return (t0) => {
+          ps.forEach((p, i) => {
+            ft(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, t0 + 0.2 + i * 0.35);
+            ft(p, { strokeDashoffset: 0 }, { strokeDashoffset: -1, duration: 0.5, ease: "power2.in" }, t0 + 3.2 + i * 0.1);
+          });
+        };
+      });
+
+      /* 04 — Texto cinético */
+      cell("04", "TEXTO CINÉTICO", "kinetic-beat-slam · gradient-sweep", (st) => {
+        const k = mk("div", "k4", '<div class="w">IA</div><div class="w">NÃO</div><div class="w g">ESPERA</div>');
+        st.appendChild(k);
+        const ws = [...k.querySelectorAll(".w")];
+        return (t0) => {
+          ws.forEach((w, i) => {
+            ft(w, { scale: 2.6, opacity: 0, y: -20 }, { scale: 1, opacity: 1, y: 0, duration: 0.28, ease: "expo.out" }, t0 + 0.2 + i * 0.45);
+            ft(k, { x: 0 }, { x: 0, duration: 0.01 }, t0 + 0.2 + i * 0.45);
+            tl.fromTo(k, { x: 7 }, { x: 0, duration: 0.2, ease: "elastic.out(1,0.3)", immediateRender: false }, t0 + 0.2 + i * 0.45 + 0.28);
+          });
+          ft(ws[2], { backgroundPosition: "0% 50%" }, { backgroundPosition: "200% 50%", duration: 1.4, ease: "none" }, t0 + 1.6);
+          ft(ws, { opacity: 1, y: 0 }, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in", stagger: 0.05 }, t0 + 3.3);
+        };
+      });
+
+      /* 05 — Texto 3D em camadas */
+      cell("05", "TEXTO 3D", "3d-text-depth-layers · rotateY", (st) => {
+        const s = mk("div", "s5"); st.appendChild(s);
+        const stack = mk("div", "stack"); stack.setAttribute("data-layout-allow-overlap", ""); s.appendChild(stack);
+        const n = 14;
+        for (let i = 0; i < n; i++) {
+          const l = mk("div", "layer", "AGORA"); l.setAttribute("data-layout-allow-overlap", "");
+          const t = i / (n - 1);
+          const c = i === n - 1 ? "#ffffff" : `rgb(${Math.round(60 + t * 60)}, ${Math.round(160 + t * 60)}, ${Math.round(190 + t * 50)})`;
+          l.style.color = c; l.style.transform = `translateZ(${(i - n) * 4}px)`;
+          stack.appendChild(l);
+        }
+        return (t0) => {
+          ft(stack, { rotationY: -42, rotationX: 14 }, { rotationY: 42, rotationX: 14, duration: 2, ease: "sine.inOut" }, t0);
+          ft(stack, { rotationY: 42, rotationX: 14 }, { rotationY: -42, rotationX: 14, duration: 2, ease: "sine.inOut" }, t0 + 2);
+        };
+      });
+
+      /* 06 — Contador + barras */
+      cell("06", "CONTADOR + BARRAS", "count-up · scaleY stagger", (st) => {
+        const s = mk("div", "s6", '<div class="num">0%</div><div class="sub">MAIS PRODUTIVIDADE</div><div class="bars"></div>');
+        st.appendChild(s);
+        const bars = [30, 46, 60, 78, 100].map((h) => { const b = mk("div", "bar"); b.style.height = h + "%"; s.querySelector(".bars").appendChild(b); return b; });
+        const num = s.querySelector(".num");
+        return (t0) => {
+          const o = { v: 0 };
+          const up = (v) => { num.textContent = "+" + Math.round(v) + "%"; };
+          ft(bars, { scaleY: 0 }, { scaleY: 1, duration: 0.7, ease: "power3.out", stagger: 0.09 }, t0 + 0.2);
+          tl.fromTo(o, { v: 0 }, { v: 87, duration: 1.6, ease: "power2.out", onUpdate: () => up(o.v), immediateRender: false }, t0 + 0.2);
+          ft(bars, { scaleY: 1 }, { scaleY: 0, duration: 0.4, ease: "power2.in", stagger: 0.04 }, t0 + 3.3);
+          tl.fromTo(o, { v: 87 }, { v: 0, duration: 0.45, ease: "power2.in", onUpdate: () => up(o.v), immediateRender: false }, t0 + 3.3);
+        };
+      });
+
+      /* 07 — Voo de câmera sobre grade de pontos */
+      cell("07", "CÂMERA 3D", "3d-camera-flight · depth-of-field", (st) => {
+        const s = mk("div", "s7", '<div class="glow7"></div><div class="cam"><div class="plane"></div></div>');
+        st.appendChild(s);
+        const cam = s.querySelector(".cam"), plane = s.querySelector(".plane");
+        const orbs = [[70, 150, 22, "#f472b6"], [350, 190, 30, "#38bdf8"]].map(([x, y, r, c]) => {
+          const o = mk("div", "orb"); o.style.cssText = `left:${x}px;top:${y}px;width:${r}px;height:${r}px;background:${c};opacity:0`; s.appendChild(o); return o;
+        });
+        return (t0) => {
+          ft(plane, { backgroundPosition: "0px 0px" }, { backgroundPosition: "0px 110px", duration: 4, ease: "none" }, t0);
+          ft(cam, { rotationZ: -4 }, { rotationZ: 4, duration: 2, ease: "sine.inOut" }, t0);
+          ft(cam, { rotationZ: 4 }, { rotationZ: -4, duration: 2, ease: "sine.inOut" }, t0 + 2);
+          orbs.forEach((o, i) => ft(o, { y: -60, scale: 0.4, opacity: 0 }, { y: 70, scale: 1.8, opacity: 0.75, duration: 1.6, ease: "power1.in" }, t0 + 0.3 + i * 1.7));
+          orbs.forEach((o, i) => ft(o, { opacity: 0.75 }, { opacity: 0, duration: 0.3 }, t0 + 1.9 + i * 1.7 > t0 + 3.9 ? t0 + 3.7 : t0 + 1.9 + i * 1.7));
+        };
+      });
+
+      /* 08 — Glitch cromático */
+      cell("08", "GLITCH", "chromatic-glitch · scanlines", (st) => {
+        const s = mk("div", "s8", '<div class="gt gr" data-layout-allow-overlap>IA MUDA TUDO</div><div class="gt gc" data-layout-allow-overlap>IA MUDA TUDO</div><div class="gt gw" data-layout-allow-overlap>IA MUDA TUDO</div><div class="slice" style="top:70px"></div><div class="slice" style="top:130px"></div><div class="slice" style="top:178px"></div><div class="scan"></div>');
+        st.appendChild(s);
+        const gr = s.querySelector(".gr"), gc = s.querySelector(".gc"), gw = s.querySelector(".gw"), sl = [...s.querySelectorAll(".slice")];
+        const bursts = [[0.6, 14], [0.78, -10], [1.5, 18], [1.62, -14], [2.4, 12], [2.55, -18], [3.3, 20]];
+        return (t0) => {
+          ft(gw, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t0 + 0.1);
+          bursts.forEach(([t, d], i) => {
+            const a = t0 + t;
+            ft(gr, { x: 0 }, { x: d, duration: 0.05 }, a); tl.to(gr, { x: 0, duration: 0.07 }, a + 0.09);
+            ft(gc, { x: 0 }, { x: -d, duration: 0.05 }, a); tl.to(gc, { x: 0, duration: 0.07 }, a + 0.09);
+            ft(gw, { skewX: 0 }, { skewX: d * 0.5, duration: 0.04 }, a); tl.to(gw, { skewX: 0, duration: 0.05 }, a + 0.08);
+            ft(sl[i % 3], { opacity: 0 }, { opacity: 1, duration: 0.03 }, a); tl.to(sl[i % 3], { opacity: 0, duration: 0.06 }, a + 0.09);
+          });
+          ft(gw, { opacity: 1 }, { opacity: 0, duration: 0.25 }, t0 + 3.7);
+        };
+      });
+
+      /* 09 — Pulso reativo à voz (colunas de pontos) */
+      cell("09", "PULSO NA VOZ", "áudio-reativo · envelope baked", (st) => {
+        const s = mk("div", "s9"); st.appendChild(s);
+        const svg = svgEl(445, 260); s.appendChild(svg);
+        const COLS = 25, GAP = 12, CY = 132, STEPS = 16;
+        const rnd = DOTS.rand(7);
+        const env = Array.from({ length: COLS }, (_, c) => Array.from({ length: STEPS }, (_, k) => {
+          const mid = 1 - Math.abs(c - (COLS - 1) / 2) / ((COLS - 1) / 2) * 0.65;
+          return Math.max(0, Math.round(mid * (0.15 + rnd() * 0.85) * 8));
+        }));
+        const lines = [];
+        for (let c = 0; c < COLS; c++) {
+          const ln = document.createElementNS(NS, "line");
+          const x = 28 + c * 16.2;
+          ln.setAttribute("x1", x); ln.setAttribute("x2", x);
+          ln.setAttribute("y1", CY); ln.setAttribute("y2", CY);
+          ln.setAttribute("stroke", c % 6 === 3 ? "#fb7185" : "#34d399"); ln.setAttribute("stroke-width", 7);
+          ln.setAttribute("stroke-linecap", "round"); ln.setAttribute("stroke-dasharray", `0 ${GAP}`);
+          svg.appendChild(ln); lines.push(ln);
+        }
+        return (t0) => {
+          lines.forEach((ln, c) => {
+            for (let k = 0; k < STEPS; k++) {
+              const n = env[c][k];
+              const prev = k === 0 ? 0 : env[c][k - 1];
+              const t = t0 + 0.1 + k * 0.22;
+              tl.fromTo(ln, { attr: { y1: CY - prev * GAP, y2: CY + prev * GAP } }, { attr: { y1: CY - n * GAP, y2: CY + n * GAP }, duration: 0.18, ease: "power1.out", immediateRender: false }, t);
+            }
+            tl.to(ln, { attr: { y1: CY, y2: CY }, duration: 0.3, ease: "power2.in" }, t0 + 3.7);
+          });
+        };
+      });
+
+      /* 10 — Transições (zoom through → blur push) */
+      cell("10", "TRANSIÇÕES", "zoom-through · blur-push", (st) => {
+        const A = mk("div", "p10", "ANTES"), B = mk("div", "p10", "DEPOIS");
+        A.style.background = "linear-gradient(135deg,#1d4ed8,#0ea5e9)"; B.style.background = "linear-gradient(135deg,#be123c,#c2410c)"; A.setAttribute("data-layout-allow-overlap", ""); B.setAttribute("data-layout-allow-overlap", ""); B.setAttribute("data-layout-allow-occlusion", ""); A.setAttribute("data-layout-allow-occlusion", "");
+        B.style.opacity = "0";
+        const c1 = mk("div", "tcap", "ZOOM THROUGH"), c2 = mk("div", "tcap", "BLUR PUSH");
+        st.append(B, A, c1, c2);
+        return (t0) => {
+          ft(A, { scale: 1, opacity: 1, x: 0, filter: "blur(0px)" }, { scale: 5, opacity: 0, duration: 0.6, ease: "power3.in" }, t0 + 1.2);
+          ft(B, { scale: 0.5, opacity: 0, x: 0, filter: "blur(0px)" }, { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, t0 + 1.2);
+          ft(B, { x: 0, opacity: 1, filter: "blur(0px)" }, { x: -140, opacity: 0, filter: "blur(14px)", duration: 0.5, ease: "power2.in" }, t0 + 3.0);
+          ft(A, { x: 140, opacity: 0, filter: "blur(14px)", scale: 1 }, { x: 0, opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.5, ease: "power2.out" }, t0 + 3.0);
+          ft(c1, { opacity: 0 }, { opacity: 1, duration: 0.2 }, t0 + 1.2); ft(c1, { opacity: 1 }, { opacity: 0, duration: 0.2 }, t0 + 2.0);
+          ft(c2, { opacity: 0 }, { opacity: 1, duration: 0.2 }, t0 + 3.0); ft(c2, { opacity: 1 }, { opacity: 0, duration: 0.2 }, t0 + 3.7);
+        };
+      });
+
+      /* 11 — Reveal com clip-path */
+      cell("11", "REVEAL CLIP-PATH", "clip-path inset · máscara", (st) => {
+        const s = mk("div", "s11", '<div class="blk"></div><div class="t11" style="top:62px">SEU</div><div class="t11" style="top:128px">CONTEÚDO</div>');
+        st.appendChild(s);
+        const blk = s.querySelector(".blk"), ts = [...s.querySelectorAll(".t11")];
+        return (t0) => {
+          ft(blk, { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "expo.inOut" }, t0 + 0.2);
+          ft(ts, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.55, ease: "power3.out", stagger: 0.15 }, t0 + 0.8);
+          ft(ts, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(100% 0% 0% 0%)", duration: 0.4, ease: "power2.in", stagger: 0.08 }, t0 + 2.8);
+          ft(blk, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 100%)", duration: 0.6, ease: "expo.inOut" }, t0 + 3.2);
+        };
+      });
+
+      /* 12 — Cards com spring pop */
+      cell("12", "SPRING POP", "spring-pop-entrance · back.out", (st) => {
+        const s = mk("div", "s12"); st.appendChild(s);
+        const data = [["#6366f1", "Novo seguidor", "agora"], ["#ec4899", "Comentário novo", "há 1 min"], ["#f59e0b", "Reel viralizou", "há 3 min"]];
+        const cs = data.map(([c, t, m], i) => {
+          const e = mk("div", "card", `<i style="background:${c}"></i><div><b>${t}</b><span>${m}</span></div>`);
+          e.style.top = 22 + i * 78 + "px"; s.appendChild(e); return e;
+        });
+        return (t0) => {
+          ft(cs, { scale: 0.6, y: 30, x: 0, opacity: 0 }, { scale: 1, y: 0, x: 0, opacity: 1, duration: 0.7, ease: "back.out(2.6)", stagger: 0.15 }, t0 + 0.2);
+          ft(cs, { scale: 1, y: 0, x: 0, opacity: 1 }, { scale: 1, y: 0, x: 60, opacity: 0, duration: 0.35, ease: "power2.in", stagger: 0.06 }, t0 + 3.2);
+        };
+      });
+
+      cells.splice(0, cells.length, ...cells.filter((c) => c.n === "01"));
+
+      const fns = cells.map((c, i) => {
+        const el = mk("div", "cell"); el.id = "c" + c.n;
+        el.style.left = "0px"; el.style.top = "0px";
+        const st = mk("div", "st"); el.appendChild(st);
+        el.appendChild(mk("div", "lb", `<b><i>${c.n}</i>${c.name}</b><span>${c.tech}</span>`));
+        root.appendChild(el);
+        return c.build(st);
+      });
+      for (let k = 0; k < LOOPS; k++) fns.forEach((f) => f(k * L));
+      (window.__timelines ||= {})["main"] = tl;
+      if (window.self === window.top && !navigator.webdriver) tl.repeat(-1).play();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=445, height=300" />
+    <title>moodboard-transicoes · célula 09</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; background: #0b0b0f; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b0b0f; font-family: Montserrat, sans-serif; color: #fff; }
+      .hd { position: absolute; left: 40px; top: 38px; font-weight: 800; font-size: 22px; letter-spacing: 0.22em; }
+      .hd2 { position: absolute; right: 40px; top: 42px; font-weight: 600; font-size: 14px; letter-spacing: 0.18em; color: #8a8a96; }
+      .cell { position: absolute; width: 445px; height: 300px; border-radius: 14px; overflow: hidden; background: #15151c; }
+      .st { position: absolute; left: 0; top: 0; width: 445px; height: 260px; overflow: hidden; background: #000; }
+      .lb { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: #15151c; }
+      .lb b { font-weight: 800; font-size: 13px; letter-spacing: 0.14em; }
+      .lb b i { font-style: normal; color: #8a8a96; margin-right: 8px; }
+      .lb span { font-weight: 600; font-size: 11px; letter-spacing: 0.1em; color: #8a8a96; }
+      .lay { position: absolute; left: 0; top: 0; width: 445px; height: 260px; overflow: hidden; }
+      .lay img { position: absolute; left: 0; top: 0; width: 445px; height: 260px; object-fit: cover; object-position: 50% 14%; display: block; }
+      .sp { position: absolute; top: 0; height: 260px; overflow: hidden; }
+      .sp img { position: absolute; top: 0; width: 445px; height: 260px; object-fit: cover; object-position: 50% 14%; display: block; }
+      .tl2 { position: absolute; overflow: hidden; }
+      .tl2 img { position: absolute; width: 445px; height: 260px; object-fit: cover; object-position: 50% 14%; display: block; }
+      .ov { position: absolute; left: 0; top: 0; width: 445px; height: 260px; opacity: 0; pointer-events: none; }
+      .ring { position: absolute; left: 212px; top: 120px; width: 20px; height: 20px; border-radius: 50%; border: 3px solid #ff2a55; box-shadow: 0 0 0 3px #00e5ff; opacity: 0; }
+    </style>
+    <style>#root { width: 445px !important; height: 300px !important; }</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="445" data-height="300">
+    </div>
+    <script>
+      const root = document.getElementById("root");
+      const L = 4, LOOPS = 3, W = 445, H = 260;
+      const tl = gsap.timeline({ paused: true });
+      const ft = (tg, a, b, p) => tl.fromTo(tg, a, { ...b, immediateRender: false }, p);
+      const mk = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+      const PAIRS = [["f0433_5", "f2612_5"], ["ffim_8", "f2612_15"], ["ffim_40", "f0433_20"]];
+      const img = (n) => `<img src="../_fontes/moodboard-transicoes/assets/${n}.jpg" alt="" />`;
+      const allow = (e) => { e.setAttribute("data-layout-allow-overflow", ""); return e; };
+
+      const layerSimple = (n) => allow(mk("div", "lay", img(n)));
+      const layerStrips = (n, k) => { const d = allow(mk("div", "lay")); const w = W / k; for (let i = 0; i < k; i++) { const s = mk("div", "sp", img(n)); s.style.left = i * w + "px"; s.style.width = w + 1 + "px"; allow(s.firstChild); allow(s); s.firstChild.style.left = -i * w + "px"; d.appendChild(s); } return d; };
+      const layerTiles = (n, c, r) => { const d = allow(mk("div", "lay")); const w = W / c, h = H / r; for (let j = 0; j < r; j++) for (let i = 0; i < c; i++) { const t = allow(mk("div", "tl2", img(n))); t.style.cssText = `left:${i * w}px;top:${j * h}px;width:${w + 1}px;height:${h + 1}px`; allow(t.firstChild); t.firstChild.style.left = -i * w + "px"; t.firstChild.style.top = -j * h + "px"; d.appendChild(t); } return d; };
+
+      /* efeitos: from/to do layer que entra, belowFrom/belowTo da camada de baixo, custom opcional */
+      const FX = {
+        zoom: { from: { scale: 0.3, opacity: 0 }, to: { scale: 1, opacity: 1, ease: "power3.out" }, bf: { scale: 1, opacity: 1 }, bt: { scale: 3, opacity: 0, ease: "power3.in" }, d: 0.7 },
+        iris: { from: { clipPath: "circle(0% at 50% 38%)" }, to: { clipPath: "circle(85% at 50% 38%)", ease: "power2.inOut" }, bf: {}, bt: {}, d: 0.8 },
+        whip: { from: { x: W }, to: { x: 0, ease: "power4.inOut" }, bf: { x: 0 }, bt: { x: -W, ease: "power4.inOut" }, d: 0.6, blur: 12 },
+        push: { from: { x: W }, to: { x: 0, ease: "back.out(1.1)" }, bf: { x: 0 }, bt: { x: -140, ease: "power3.out" }, d: 0.8 },
+        blurzoom: { from: { scale: 1.5, opacity: 0, filter: "blur(18px)" }, to: { scale: 1, opacity: 1, filter: "blur(0px)", ease: "power3.out" }, bf: { scale: 1, opacity: 1, filter: "blur(0px)" }, bt: { scale: 1.5, opacity: 0, filter: "blur(18px)", ease: "power3.in" }, d: 0.7 },
+        blinds: { strips: 8, d: 0.7 },
+        mosaic: { tiles: [8, 5], d: 0.7 },
+        glitch: { custom: "glitch", d: 0.35, reset: { opacity: 0, x: 0, skewX: 0 } },
+        leak: { custom: "leak", d: 0.9, reset: { opacity: 0 } },
+        flash: { custom: "flash", d: 0.6, reset: { opacity: 0 } },
+        dip: { custom: "dip", d: 0.8, reset: { opacity: 0 } },
+        chroma: { custom: "chroma", d: 0.8, reset: { clipPath: "circle(0% at 50% 50%)" } },
+      };
+
+      const cells = [];
+      const cell = (n, name, tech, fx, pairIdx) => cells.push({ n, name, tech, fx, pairIdx });
+
+      cell("01", "ZOOM THROUGH", "zoom-through-transition", "zoom", 0);
+      cell("02", "IRIS", "iris-reveal · clip-path", "iris", 1);
+      cell("03", "WHIP PAN", "whip-pan-cut · motion blur", "whip", 2);
+      cell("04", "PUSH ELÁSTICO", "css-push · elastic", "push", 0);
+      cell("05", "BLUR ZOOM", "cinematic-zoom (aprox.)", "blurzoom", 1);
+      cell("06", "PERSIANAS", "css-cover · blinds", "blinds", 2);
+      cell("07", "MOSAICO", "css-grid · grid dissolve", "mosaic", 0);
+      cell("08", "GLITCH", "css-distortion · glitch", "glitch", 1);
+      cell("09", "LIGHT LEAK", "css-light · light leak", "leak", 2);
+      cell("10", "FLASH", "overexposure burn", "flash", 0);
+      cell("11", "DIP TO BLACK", "css-dissolve · color dip", "dip", 1);
+      cell("12", "RADIAL CROMÁTICO", "chromatic-radial-split (aprox.)", "chroma", 2);
+
+      function build(st, c) {
+        const fx = FX[c.fx], [pa, pb] = PAIRS[c.pairIdx];
+        const mkL = (n) => fx.strips ? layerStrips(n, fx.strips) : fx.tiles ? layerTiles(n, fx.tiles[0], fx.tiles[1]) : layerSimple(n);
+        const A = mkL(pa), B = mkL(pb), A2 = mkL(pa);
+        st.append(A, B, A2);
+        const ov = allow(mk("div", "ov")); st.appendChild(ov);
+        const ring = allow(mk("div", "ring")); st.appendChild(ring);
+        const kids = (l) => [...l.children];
+        const hash = (i) => ((i * 7919) % 40) / 40;
+        const hide = (l) => {
+          if (fx.strips) tl.set(kids(l), { scaleX: 0 }, 0);
+          else if (fx.tiles) tl.set(kids(l), { opacity: 0 }, 0);
+          else if (fx.custom) tl.set(l, fx.reset, 0);
+          else tl.set(l, fx.from, 0);
+        };
+        hide(B); hide(A2);
+        if (fx.custom === "chroma") { tl.set([B, A2], { clipPath: "circle(0% at 50% 50%)" }, 0); }
+
+        const play = (layer, below, t) => {
+          const d = fx.d;
+          if (fx.strips) { ft(kids(layer), { scaleX: 0 }, { scaleX: 1, duration: d * 0.6, ease: "power2.out", delay: (i) => i * (d * 0.4 / fx.strips) }, t); return; }
+          if (fx.tiles) { ft(kids(layer), { opacity: 0 }, { opacity: 1, duration: 0.2, delay: (i) => hash(i) * (d * 0.8) }, t); return; }
+          if (fx.custom === "glitch") {
+            const steps = [[0, 1, 16, 10], [0.06, 0, 0, 0], [0.11, 1, -20, -12], [0.17, 0, 6, 0], [0.22, 1, 14, 8], [0.28, 1, 0, 0]];
+            steps.forEach(([dt, o, x, sk]) => tl.set(layer, { opacity: o, x, skewX: sk }, t + dt));
+            tl.set(below, { opacity: 0 }, t + 0.3);
+            return;
+          }
+          if (fx.custom === "leak") {
+            ft(ov, { opacity: 0, scale: 0.4, background: "radial-gradient(circle at 70% 40%, #fff7ae, #fb923c 40%, rgba(239,68,68,0) 72%)" }, { opacity: 1, scale: 1.8, duration: d * 0.5, ease: "power2.in" }, t);
+            tl.set(layer, { opacity: 1 }, t + d * 0.5);
+            ft(ov, { opacity: 1 }, { opacity: 0, duration: d * 0.5, ease: "power2.out" }, t + d * 0.5);
+            return;
+          }
+          if (fx.custom === "flash") {
+            ft(ov, { opacity: 0, background: "#ffffff" }, { opacity: 1, duration: 0.18, ease: "power2.in" }, t);
+            tl.set(layer, { opacity: 1 }, t + 0.2);
+            ft(ov, { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power2.out" }, t + 0.2);
+            return;
+          }
+          if (fx.custom === "dip") {
+            ft(ov, { opacity: 0, background: "#000000" }, { opacity: 1, duration: d * 0.45, ease: "power1.in" }, t);
+            tl.set(layer, { opacity: 1 }, t + d * 0.5);
+            ft(ov, { opacity: 1 }, { opacity: 0, duration: d * 0.45, ease: "power1.out" }, t + d * 0.5);
+            return;
+          }
+          if (fx.custom === "chroma") {
+            ft(layer, { clipPath: "circle(0% at 50% 50%)" }, { clipPath: "circle(80% at 50% 50%)", duration: d, ease: "power2.out" }, t);
+            ft(ring, { scale: 1, opacity: 1 }, { scale: 24, opacity: 0, duration: d, ease: "power2.out" }, t);
+            return;
+          }
+          ft(layer, fx.from, { ...fx.to, duration: fx.d }, t);
+          if (Object.keys(fx.bf).length) ft(below, fx.bf, { ...fx.bt, duration: fx.d }, t);
+          if (fx.blur) { ft([layer, below], { filter: "blur(0px)" }, { filter: `blur(${fx.blur}px)`, duration: d / 2, yoyo: true, repeat: 1 }, t); }
+        };
+        const reset = (t) => {
+          [B, A2].forEach((l) => {
+            if (fx.strips) tl.set(kids(l), { scaleX: 0 }, t);
+            else if (fx.tiles) tl.set(kids(l), { opacity: 0 }, t);
+            else if (fx.custom) tl.set(l, fx.reset, t);
+            else tl.set(l, { ...fx.from, filter: fx.from.filter || "blur(0px)" }, t);
+          });
+          if (fx.bf && Object.keys(fx.bf).length) tl.set(A, fx.bf, t);
+          if (fx.custom === "glitch" || fx.custom === "chroma") tl.set(A, { opacity: 1 }, t);
+          if (fx.blur) tl.set([A, B, A2], { filter: "blur(0px)" }, t);
+          tl.set(ov, { opacity: 0 }, t);
+        };
+        return (t0) => {
+          play(B, A, t0 + 1.0);
+          play(A2, B, t0 + 2.8);
+          reset(t0 + 3.97);
+        };
+      }
+
+      cells.splice(0, cells.length, ...cells.filter((c) => c.n === "09"));
+
+      const fns = cells.map((c, i) => {
+        const el = mk("div", "cell"); el.id = "c" + c.n;
+        el.style.left = "0px"; el.style.top = "0px";
+        const st = mk("div", "st"); allow(st); el.appendChild(st);
+        el.appendChild(mk("div", "lb", `<b><i>${c.n}</i>${c.name}</b><span>${c.tech}</span>`));
+        root.appendChild(el);
+        return build(st, c);
+      });
+      for (let k = 0; k < LOOPS; k++) fns.forEach((f) => f(k * L));
+      (window.__timelines ||= {})["main"] = tl;
+      if (window.self === window.top && !navigator.webdriver) tl.repeat(-1).play();
+    </script>
+  </body>
+</html>

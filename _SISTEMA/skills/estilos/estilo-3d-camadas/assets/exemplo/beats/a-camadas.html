@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+  Estilo 1 — Montagem 3D em camadas. Painel SUPERIOR (0–860px); o Julio fica na metade de baixo
+  (câmera y +760, feita pelo host). Cinco painéis de vidro caem em perspectiva, um por ritmo da fala
+  ("automação rodando e funcionando lisinho"): o pulso de luz laranja atravessa as camadas em "rodando"
+  e a pilha se alinha em "lisinho". Montado em t=0 — todos os tempos abaixo são LOCAIS (s).
+-->
+<html lang="pt-BR">
+  <head><meta charset="UTF-8"></head>
+  <body>
+    <template>
+      <style>
+        #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; font-family: "Montserrat", sans-serif; }
+        #a-panel {
+          position: absolute; left: 0; top: 0; width: 1080px; height: 860px; overflow: hidden;
+          background: radial-gradient(ellipse 70% 60% at 50% 46%, #1C1C1C 0%, #111111 62%, #0A0A0A 100%);
+        }
+        #a-glow {
+          position: absolute; left: 50%; top: 52%; width: 760px; height: 760px; margin: -380px 0 0 -380px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(249, 115, 22, 0.28) 0%, rgba(249, 115, 22, 0) 62%); opacity: 0;
+        }
+        #a-dots {
+          position: absolute; inset: 0; opacity: 0.5;
+          background-image: radial-gradient(circle, rgba(255, 255, 255, 0.10) 2px, transparent 2.5px);
+          background-size: 54px 54px;
+          -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 0%, transparent 78%);
+          mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 0%, transparent 78%);
+        }
+        #a-edge {
+          position: absolute; left: 0; top: 860px; width: 1080px; height: 6px;
+          background: linear-gradient(90deg, rgba(249, 115, 22, 0), #F97316 20%, #FDBA74 50%, #F97316 80%, rgba(249, 115, 22, 0));
+          box-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
+        }
+        #a-scene { position: absolute; left: 0; top: 0; width: 1080px; height: 860px; perspective: 1700px; perspective-origin: 50% 46%; }
+        #a-tilt, #a-spin { position: absolute; left: 540px; top: 440px; width: 0; height: 0; transform-style: preserve-3d; }
+        #a-spin { left: 0; top: 0; }
+        .a-layer {
+          position: absolute; left: -290px; top: -180px; width: 580px; height: 360px; border-radius: 40px;
+          background: linear-gradient(145deg, rgba(44, 44, 44, 0.96), rgba(20, 20, 20, 0.97));
+          border: 4px solid #282828;
+          box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) inset, 0 50px 90px rgba(0, 0, 0, 0.55);
+          opacity: 0;
+        }
+        .a-layer .ic { position: absolute; left: 52px; top: 108px; width: 144px; height: 144px; }
+        .a-layer .lb { position: absolute; left: 232px; top: 112px; color: #fff; font-weight: 900; font-size: 60px; letter-spacing: 0.02em; line-height: 1; }
+        .a-layer .sub { position: absolute; left: 234px; top: 196px; color: #A8A8A8; font-weight: 800; font-size: 26px; letter-spacing: 0.32em; }
+        .a-layer .n { position: absolute; right: 44px; top: 30px; color: #8A8A8A; font-weight: 900; font-size: 56px; }
+        .a-layer .bar { position: absolute; left: 52px; right: 52px; bottom: 40px; height: 10px; border-radius: 5px; background: #282828; overflow: hidden; }
+        .a-layer .bar i { display: block; height: 100%; width: 0%; background: #F97316; border-radius: 5px; }
+        #a-badge {
+          position: absolute; left: 50%; top: 56px; margin-left: -230px; width: 460px; height: 92px; border-radius: 46px;
+          background: #F97316; color: #0A0A0A; display: flex; align-items: center; justify-content: center; gap: 18px;
+          font-weight: 900; font-size: 44px; letter-spacing: 0.12em; box-shadow: 0 0 60px rgba(249, 115, 22, 0.65); opacity: 0;
+        }
+        #a-badge svg { width: 48px; height: 48px; }
+      </style>
+      <div id="root" data-composition-id="a-camadas" data-width="1080" data-height="1920">
+        <div id="a-panel">
+          <div id="a-dots"></div>
+          <div id="a-glow"></div>
+          <div id="a-scene" data-layout-allow-overlap>
+            <div id="a-tilt">
+              <div id="a-spin">
+                <div class="a-layer" data-layout-allow-overlap id="a-l0">
+                  <svg class="ic" viewBox="0 0 144 144" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M80 12 L34 80 H70 L62 132 L110 62 H74 Z" /></svg>
+                  <div data-layout-allow-overlap class="lb">GATILHO</div><div data-layout-allow-overlap class="sub">CHEGOU PEDIDO</div><div data-layout-allow-overlap class="n">01</div><div class="bar"><i></i></div>
+                </div>
+                <div class="a-layer" data-layout-allow-overlap id="a-l1">
+                  <svg class="ic" viewBox="0 0 144 144" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="72" cy="34" rx="48" ry="18" /><path d="M24 34 V72 C24 82 46 90 72 90 C98 90 120 82 120 72 V34" /><path d="M24 72 V108 C24 118 46 126 72 126 C98 126 120 118 120 108 V72" /></svg>
+                  <div data-layout-allow-overlap class="lb">DADOS</div><div data-layout-allow-overlap class="sub">LÊ E PREENCHE</div><div data-layout-allow-overlap class="n">02</div><div class="bar"><i></i></div>
+                </div>
+                <div class="a-layer" data-layout-allow-overlap id="a-l2">
+                  <svg class="ic" viewBox="0 0 144 144" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 22 H128 L86 70 V116 L58 128 V70 Z" /></svg>
+                  <div data-layout-allow-overlap class="lb">REGRAS</div><div data-layout-allow-overlap class="sub">DECIDE SOZINHO</div><div data-layout-allow-overlap class="n">03</div><div class="bar"><i></i></div>
+                </div>
+                <div class="a-layer" data-layout-allow-overlap id="a-l3">
+                  <svg class="ic" viewBox="0 0 144 144" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M126 18 L60 84" /><path d="M126 18 L88 126 L60 84 L18 56 Z" /></svg>
+                  <div data-layout-allow-overlap class="lb">AÇÃO</div><div data-layout-allow-overlap class="sub">ENVIA E AVISA</div><div data-layout-allow-overlap class="n">04</div><div class="bar"><i></i></div>
+                </div>
+                <div class="a-layer" data-layout-allow-overlap id="a-l4">
+                  <svg class="ic" viewBox="0 0 144 144" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><circle cx="72" cy="72" r="54" /><path d="M44 74 L64 94 L102 52" /></svg>
+                  <div data-layout-allow-overlap class="lb">PRONTO</div><div data-layout-allow-overlap class="sub">SEM VOCÊ</div><div data-layout-allow-overlap class="n">05</div><div class="bar"><i></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="a-badge">
+            <svg viewBox="0 0 48 48" fill="none" stroke="#0A0A0A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25 L21 36 L39 13" /></svg>RODANDO
+          </div>
+        </div>
+        <div id="a-edge"></div>
+      </div>
+      <script>
+        (function () {
+          var tl = gsap.timeline({ paused: true });
+          var LAYERS = ["#a-l0", "#a-l1", "#a-l2", "#a-l3", "#a-l4"];
+          // final exploded z (bottom → top) and the cue each layer lands on (local seconds)
+          var Z_OPEN = [-220, -110, 0, 110, 220];
+          var Z_CLOSE = [-70, -35, 0, 35, 70];
+          var DROP = [0.9, 1.45, 2.0, 2.55, 2.95];
+
+          gsap.set("#a-tilt", { rotationX: 62, scale: 1.15 });
+          gsap.set("#a-spin", { rotation: -30 });
+          LAYERS.forEach(function (id, i) { gsap.set(id, { z: 900, opacity: 0 }); });
+          gsap.set(["#a-glow", "#a-badge"], { opacity: 0 });
+
+          // panel whip-in from above, together with the camera drop (host)
+          tl.fromTo("#a-panel", { yPercent: -100 }, { yPercent: 0, duration: 0.36, ease: "power4.out", immediateRender: false }, 0);
+          tl.fromTo("#a-edge", { y: -866 }, { y: 0, duration: 0.36, ease: "power4.out", immediateRender: false }, 0);
+          tl.to("#a-glow", { opacity: 1, duration: 0.8, ease: "sine.out" }, 0.5);
+
+          // slow idle drift so the stack never sits still
+          tl.fromTo("#a-spin", { rotation: -30 }, { rotation: -22, duration: 3.9, ease: "sine.inOut", immediateRender: false }, 0.6);
+
+          // layers drop in on the spoken rhythm (bottom → top)
+          LAYERS.forEach(function (id, i) {
+            tl.fromTo(id, { z: 900, opacity: 0 }, { z: Z_OPEN[i], opacity: 1, duration: 0.5, ease: "power3.out", immediateRender: false }, DROP[i] - 0.05);
+            var fill = id + " .bar i";
+            tl.fromTo(fill, { width: "0%" }, { width: "100%", duration: 0.55, ease: "power2.out", immediateRender: false }, DROP[i] + 0.15);
+          });
+          // slam on "automação": tiny overshoot of the whole stack
+          tl.to("#a-tilt", { scale: 1.2, duration: 0.08, ease: "expo.out" }, 2.97);
+          tl.to("#a-tilt", { scale: 1.15, duration: 0.35, ease: "power2.out" }, 3.06);
+
+          // "rodando": pulse of orange light travels up the stack
+          LAYERS.forEach(function (id, i) {
+            var t0 = 3.85 + i * 0.1;
+            tl.to(id, { borderColor: "#F97316", boxShadow: "0 0 0 1px rgba(249,115,22,.5) inset, 0 0 70px rgba(249,115,22,.55), 0 50px 90px rgba(0,0,0,.55)", duration: 0.12, ease: "power2.out" }, t0);
+            tl.to(id + " .n", { color: "#F97316", duration: 0.12 }, t0);
+            tl.to(id + " .ic", { stroke: "#F97316", duration: 0.12 }, t0);
+          });
+
+          // "funcionando … lisinho": the stack closes and aligns, badge pops
+          LAYERS.forEach(function (id, i) {
+            tl.to(id, { z: Z_CLOSE[i], duration: 0.7, ease: "power3.inOut" }, 4.5);
+          });
+          tl.to("#a-tilt", { rotationX: 46, duration: 0.8, ease: "power3.inOut" }, 4.5);
+          tl.to("#a-spin", { rotation: -8, duration: 0.8, ease: "power3.inOut" }, 4.5);
+          tl.fromTo("#a-badge", { opacity: 0, y: -24, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(2.4)", immediateRender: false }, 5.15);
+          tl.to("#a-glow", { scale: 1.25, opacity: 1, duration: 0.5, ease: "power2.out" }, 5.15);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["a-camadas"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=445, height=300">
+    <title>moodboard-templates · célula 11</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="../_fontes/moodboard-templates/compositions/lib/dots.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; background: #0b0b0f; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b0b0f; font-family: Montserrat, sans-serif; color: #fff; }
+      .hd { position: absolute; left: 40px; top: 38px; font-weight: 800; font-size: 22px; letter-spacing: 0.22em; }
+      .hd2 { position: absolute; right: 40px; top: 42px; font-weight: 600; font-size: 14px; letter-spacing: 0.18em; color: #8a8a96; }
+      .cell { position: absolute; width: 445px; height: 300px; border-radius: 14px; overflow: hidden; background: #15151c; }
+      .st { position: absolute; left: 0; top: 0; width: 445px; height: 260px; overflow: hidden; }
+      .lb { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: #15151c; }
+      .lb b { font-weight: 800; font-size: 13px; letter-spacing: 0.14em; }
+      .lb b i { font-style: normal; color: #8a8a96; margin-right: 8px; }
+      .lb span { font-weight: 600; font-size: 11px; letter-spacing: 0.1em; color: #8a8a96; }
+      .a { position: absolute; }
+      svg { position: absolute; left: 0; top: 0; }
+
+      /* 01 lock screen */
+      .s1 { position: absolute; inset: 0; background: linear-gradient(160deg, #7c3aed, #ec4899 55%, #fb923c); }
+      .ph { position: absolute; left: 122px; top: 14px; width: 200px; height: 300px; border-radius: 34px; background: #0b0b10; padding: 7px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+      .scr { position: absolute; left: 7px; top: 7px; right: 7px; bottom: 7px; border-radius: 28px; overflow: hidden; background: linear-gradient(170deg, #1e1b4b, #7e22ce 60%, #f97316); }
+      .clk { position: absolute; left: 0; right: 0; top: 24px; text-align: center; font-weight: 700; font-size: 38px; letter-spacing: -0.02em; }
+      .nt { position: absolute; left: 10px; right: 10px; height: 40px; border-radius: 12px; background: #fff; color: #111; display: flex; align-items: center; gap: 8px; padding: 0 9px; }
+      .nt i { width: 22px; height: 22px; border-radius: 6px; flex: none; }
+      .nt b { font-size: 9.5px; font-weight: 800; display: block; line-height: 1.2; }
+      .nt span { font-size: 8.5px; font-weight: 600; color: #333; display: block; }
+      /* 02 chat */
+      .s2 { position: absolute; inset: 0; background: #0f1115; }
+      .bub { position: absolute; padding: 10px 14px; border-radius: 16px; font-weight: 600; font-size: 13px; line-height: 1.35; opacity: 0; }
+      .bu { right: 24px; top: 24px; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; width: 210px; }
+      .ba { left: 24px; top: 100px; background: #1e2330; color: #e6e9f2; border-bottom-left-radius: 4px; width: 290px; }
+      .dots3 { position: absolute; left: 24px; top: 104px; display: flex; gap: 5px; background: #1e2330; padding: 12px 14px; border-radius: 16px; opacity: 0; }
+      .dots3 i { width: 7px; height: 7px; border-radius: 50%; background: #8da2fb; display: block; }
+      .inp { position: absolute; left: 20px; right: 20px; bottom: 16px; height: 38px; border-radius: 19px; background: #1a1e29; border: 1px solid #2c3345; }
+      /* 03 X post */
+      .s3 { position: absolute; inset: 0; background: #1d9bf0; }
+      .xc { position: absolute; left: 36px; top: 34px; width: 373px; height: 190px; border-radius: 18px; background: #000; padding: 16px; }
+      .av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #f97316, #ec4899); flex: none; }
+      .xh { display: flex; gap: 10px; align-items: center; }
+      .xh b { font-size: 13px; font-weight: 800; display: block; }
+      .xh span { font-size: 11px; color: #9aa4b2; font-weight: 500; display: block; }
+      .xt { margin-top: 12px; font-size: 14px; font-weight: 600; line-height: 1.4; }
+      .xm { position: absolute; left: 16px; right: 16px; bottom: 14px; display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #aab4c0; }
+      /* 04 IG follow */
+      .s4 { position: absolute; inset: 0; background: linear-gradient(45deg, #f59e0b, #ef4444 40%, #a21caf 75%, #4f46e5); }
+      .fc { position: absolute; left: 62px; top: 48px; width: 321px; height: 164px; border-radius: 20px; background: #fff; color: #111; padding: 18px; }
+      .fav { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(45deg, #f59e0b, #ec4899, #7c3aed); padding: 3px; flex: none; }
+      .fav div { width: 100%; height: 100%; border-radius: 50%; background: #f3f4f6; border: 3px solid #fff; }
+      .fn { font-weight: 800; font-size: 15px; }
+      .fs { font-weight: 600; font-size: 11px; color: #555; }
+      .fb { position: absolute; left: 18px; right: 18px; bottom: 16px; height: 40px; border-radius: 10px; background: #3b49df; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+      /* 05 terminal */
+      .s5 { position: absolute; inset: 0; background: #0a0f0d; }
+      .tw { position: absolute; left: 24px; top: 20px; right: 24px; bottom: 16px; border-radius: 12px; background: #101916; border: 1px solid #1f3a30; }
+      .tb { height: 28px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-bottom: 1px solid #1f3a30; }
+      .tb i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+      .tl { position: absolute; left: 16px; font-family: "SF Mono", Menlo, monospace; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: #5eead4; }
+      /* 06 browser */
+      .s6 { position: absolute; inset: 0; background: #e5e7eb; }
+      .br { position: absolute; left: 30px; top: 22px; right: 30px; bottom: 0; border-radius: 12px 12px 0 0; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.18); overflow: hidden; }
+      .bt { height: 30px; background: #f3f4f6; display: flex; align-items: center; gap: 6px; padding: 0 12px; }
+      .bt i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+      .url { margin-left: 14px; height: 18px; width: 200px; border-radius: 9px; background: #fff; font-size: 9.5px; font-weight: 600; color: #6b7280; display: flex; align-items: center; padding: 0 10px; }
+      .hero { position: absolute; left: 28px; top: 58px; font-weight: 900; font-size: 26px; line-height: 1.12; color: #111827; letter-spacing: -0.02em; }
+      .cta { position: absolute; left: 28px; top: 132px; width: 118px; height: 34px; border-radius: 8px; background: #111827; color: #fff; font-weight: 800; font-size: 12px; display: grid; place-items: center; }
+      .toast { position: absolute; right: 20px; top: 44px; padding: 8px 12px; border-radius: 8px; background: #15803d; color: #fff; font-weight: 800; font-size: 11px; opacity: 0; }
+      .cur { position: absolute; left: 0; top: 0; width: 22px; height: 26px; }
+      /* 07 lower thirds */
+      .s7 { position: absolute; inset: 0; background: linear-gradient(135deg, #334155, #0f172a 60%, #1e293b); }
+      .lt { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; }
+      /* 08 devices */
+      .s8 { position: absolute; inset: 0; background: linear-gradient(135deg, #f1f5f9, #cbd5e1); }
+      .dv { position: absolute; background: #111827; border-radius: 12px; padding: 5px; box-shadow: 0 10px 22px rgba(15,23,42,.28); }
+      .dv div { width: 100%; height: 100%; border-radius: 8px; overflow: hidden; }
+      /* 09 notes */
+      .s9 { position: absolute; inset: 0; background: #fff7d6; }
+      .nh { position: absolute; left: 30px; top: 22px; font-weight: 900; font-size: 22px; color: #1c1917; letter-spacing: -0.02em; }
+      .nl { position: absolute; left: 30px; font-weight: 600; font-size: 14px; color: #44403c; white-space: nowrap; }
+      .ck { position: absolute; left: 30px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #d97706; }
+      /* 10 map */
+      .s10 { position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, #12335a, #07101f); }
+      /* 11 before after */
+      .s11 { position: absolute; inset: 0; }
+      .pan { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; font-size: 44px; letter-spacing: 0.02em; }
+      .pl { position: absolute; top: 12px; font-weight: 800; font-size: 10px; letter-spacing: 0.2em; padding: 4px 8px; border-radius: 6px; background: #000; color: #fff; }
+      /* 12 glass */
+      .s12 { position: absolute; inset: 0; background: #0b1020; }
+      .bl { position: absolute; border-radius: 50%; filter: blur(34px); }
+      .gl { position: absolute; border-radius: 18px; background: rgba(8,12,30,0.45); border: 1px solid rgba(255,255,255,0.32); box-shadow: 0 8px 24px rgba(0,0,0,0.25); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+      .gl b { position: absolute; left: 16px; top: 14px; font-weight: 900; font-size: 30px; letter-spacing: -0.02em; }
+      .gl span { position: absolute; left: 16px; bottom: 12px; font-weight: 700; font-size: 10px; letter-spacing: 0.14em; color: #fff; }
+    </style>
+    <style>#root { width: 445px !important; height: 300px !important; }</style>
+  </head>
+  <body>
+    <div data-hf-id="hf-9hlr" id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="445" data-height="300">
+    </div>
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const root = document.getElementById("root");
+      const L = 4, LOOPS = 3;
+      const tl = gsap.timeline({ paused: true });
+      const ft = (tg, a, b, p) => tl.fromTo(tg, a, { ...b, immediateRender: false }, p);
+      const mk = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+      const svgEl = (w, h) => { const s = document.createElementNS(NS, "svg"); s.setAttribute("width", w); s.setAttribute("height", h); s.setAttribute("viewBox", `0 0 ${w} ${h}`); return s; };
+      const typeTo = (el, str, t, dur) => {
+        const o = { n: 0 };
+        tl.fromTo(o, { n: 0 }, { n: str.length, duration: dur, ease: "none", onUpdate: () => { el.textContent = str.slice(0, Math.round(o.n)); }, immediateRender: false }, t);
+      };
+      const clear = (el, t) => { tl.set(el, { textContent: "" }, t); };
+      const cells = [];
+      const cell = (n, name, tech, build) => cells.push({ n, name, tech, build });
+
+      /* 01 — Lock screen com notificações */
+      cell("01", "NOTIFICAÇÕES", "notification-cascade · phone", (st) => {
+        const s = mk("div", "s1", '<div class="ph"><div class="scr"><div class="clk" data-layout-allow-occlusion data-layout-allow-overlap>9:41</div></div></div>'); st.appendChild(s);
+        const scr = s.querySelector(".scr");
+        const data = [["#22c55e", "Nova venda", "R$ 197 · Hotmart"], ["#ef4444", "Novo comentário", "@ana quero esse curso"], ["#3b82f6", "Reel bombando", "+12 mil views"]];
+        const ns = data.map(([c, t, m], i) => { const e = mk("div", "nt", `<i style="background:${c}"></i><div><b>${t}</b><span>${m}</span></div>`); e.style.top = 84 + i * 48 + "px"; e.setAttribute("data-layout-ignore", ""); scr.appendChild(e); return e; });
+        tl.set(ns, { y: 280 }, 0);
+        return (t0) => {
+          ft(ns, { y: 280 }, { y: 0, duration: 0.6, ease: "back.out(1.6)", stagger: 0.35 }, t0 + 0.3);
+          ft(ns, { y: 0 }, { y: 280, duration: 0.35, ease: "power2.in", stagger: 0.05 }, t0 + 3.4);
+        };
+      });
+
+      /* 02 — Chat de IA */
+      cell("02", "CHAT DE IA", "claude-exchange · chat-thread", (st) => {
+        const s = mk("div", "s2", '<div class="bub bu"></div><div class="dots3"><i></i><i></i><i></i></div><div class="bub ba"></div><div class="inp"></div>'); st.appendChild(s);
+        const bu = s.querySelector(".bu"), ba = s.querySelector(".ba"), d3 = s.querySelector(".dots3"), dots = [...d3.querySelectorAll("i")];
+        return (t0) => {
+          ft(bu, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, t0 + 0.15);
+          typeTo(bu, "Como edito um Reel mais rápido?", t0 + 0.2, 1.0);
+          ft(d3, { opacity: 0 }, { opacity: 1, duration: 0.2 }, t0 + 1.3);
+          dots.forEach((d, i) => ft(d, { y: 0 }, { y: -5, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut" }, t0 + 1.3 + i * 0.12));
+          ft(d3, { opacity: 1 }, { opacity: 0, duration: 0.15 }, t0 + 2.2);
+          ft(ba, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3 }, t0 + 2.2);
+          typeTo(ba, "Corte os silêncios, use legenda karaokê e um gancho forte nos 3 primeiros segundos.", t0 + 2.3, 1.2);
+          ft([bu, ba], { opacity: 1 }, { opacity: 0, duration: 0.25 }, t0 + 3.7);
+          tl.set(bu, { textContent: "" }, t0 + 3.95); tl.set(ba, { textContent: "" }, t0 + 3.95);
+        };
+      });
+
+      /* 03 — Post do X */
+      cell("03", "POST DO X", "x-post · card de engajamento", (st) => {
+        const s = mk("div", "s3", '<div class="xc"><div class="xh"><div class="av"></div><div><b>Julio Neto</b><span>@juli0net0</span></div></div><div class="xt">IA não vai tirar seu emprego. Quem usa IA vai.</div><div class="xm"><span class="m1">♡ 0</span><span class="m2">↻ 0</span><span class="m3">💬 0</span></div></div>');
+        st.appendChild(s);
+        const xc = s.querySelector(".xc"), ms = ["m1", "m2", "m3"].map((c) => s.querySelector("." + c));
+        const pre = ["♡ ", "↻ ", "💬 "], to = [2480, 612, 148];
+        return (t0) => {
+          ft(xc, { y: 60, scale: 0.85, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.8)" }, t0 + 0.1);
+          ms.forEach((m, i) => { const o = { v: 0 }; tl.fromTo(o, { v: 0 }, { v: to[i], duration: 1.6, ease: "power2.out", onUpdate: () => { m.textContent = pre[i] + Math.round(o.v).toLocaleString("pt-BR"); }, immediateRender: false }, t0 + 0.9); });
+          ft(xc, { y: 0, opacity: 1 }, { y: -40, opacity: 0, duration: 0.4, ease: "power2.in" }, t0 + 3.5);
+        };
+      });
+
+      /* 04 — Instagram follow */
+      cell("04", "FOLLOW CARD", "instagram-follow · x-follow-card", (st) => {
+        const s = mk("div", "s4", '<div class="fc"><div style="display:flex;gap:14px;align-items:center"><div class="fav"><div></div></div><div><div class="fn">@juli0net0</div><div class="fs"><span class="fl">0</span> seguidores</div></div></div><div class="fb"><span class="bt1">Seguir</span></div></div>');
+        st.appendChild(s);
+        const fc = s.querySelector(".fc"), fb = s.querySelector(".fb"), bt1 = s.querySelector(".bt1"), fl = s.querySelector(".fl");
+        return (t0) => {
+          ft(fc, { scale: 0.7, opacity: 0, y: 30 }, { scale: 1, opacity: 1, y: 0, duration: 0.55, ease: "back.out(2)" }, t0 + 0.1);
+          const o = { v: 0 };
+          tl.fromTo(o, { v: 0 }, { v: 48200, duration: 1.4, ease: "power2.out", onUpdate: () => { fl.textContent = Math.round(o.v).toLocaleString("pt-BR"); }, immediateRender: false }, t0 + 0.5);
+          ft(fb, { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1 }, t0 + 2.0);
+          ft(fb, { backgroundColor: "#3b49df" }, { backgroundColor: "#e5e7eb", duration: 0.2 }, t0 + 2.1);
+          tl.set(bt1, { textContent: "Seguindo ✓", color: "#111" }, t0 + 2.1);
+          ft(fc, { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.95, duration: 0.3 }, t0 + 3.6);
+          tl.set(bt1, { textContent: "Seguir", color: "#fff" }, t0 + 3.95);
+          tl.set(fb, { backgroundColor: "#3b49df" }, t0 + 3.95);
+        };
+      });
+
+      /* 05 — Terminal */
+      cell("05", "TERMINAL", "terminal-simulator · code-typing", (st) => {
+        const s = mk("div", "s5", '<div class="tw"><div class="tb"><i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i></div></div>');
+        st.appendChild(s);
+        const tw = s.querySelector(".tw");
+        const lines = [["$ npx hyperframes init reel", "#5eead4", 0.2, 0.9], ["✓ projeto criado", "#a7f3d0", 1.2, 0.4], ["$ npm run render", "#5eead4", 1.7, 0.7], ["▸ renderizando 4K… 100%", "#fde68a", 2.5, 0.6], ["✓ pronto: reel.mp4", "#a7f3d0", 3.1, 0.4]];
+        const els = lines.map(([, c], i) => { const e = mk("div", "tl"); e.style.top = 42 + i * 28 + "px"; e.style.color = c; tw.appendChild(e); return e; });
+        return (t0) => {
+          lines.forEach(([txt, , t, d], i) => typeTo(els[i], txt, t0 + t, d));
+          els.forEach((e) => tl.set(e, { textContent: "" }, t0 + 3.95));
+        };
+      });
+
+      /* 06 — Browser com cursor */
+      cell("06", "BROWSER", "browser-device-stage · cursor", (st) => {
+        const s = mk("div", "s6", '<div class="br"><div class="bt"><i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i><div class="url">pratic.com/lancamento</div></div><div class="hero">Lance seu curso<br>em 7 dias</div><div class="cta">Publicar agora</div><div class="toast">✓ Publicado!</div></div>');
+        st.appendChild(s);
+        const cta = s.querySelector(".cta"), toast = s.querySelector(".toast");
+        const cur = mk("div", "cur", '<svg width="22" height="26" viewBox="0 0 22 26"><path d="M2 2 L2 21 L7.5 16.5 L11 24 L14.5 22.5 L11 15 L18 15 Z" fill="#111" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>');
+        s.appendChild(cur);
+        return (t0) => {
+          ft(cur, { x: 360, y: 190 }, { x: 78, y: 160, duration: 1.3, ease: "power3.inOut" }, t0 + 0.3);
+          ft(cta, { scale: 1 }, { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1 }, t0 + 1.75);
+          ft(cta, { backgroundColor: "#111827" }, { backgroundColor: "#15803d", duration: 0.2 }, t0 + 1.85);
+          ft(toast, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.35, ease: "back.out(2)" }, t0 + 2.0);
+          ft(toast, { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.5);
+          ft(cur, { x: 78, y: 160 }, { x: 360, y: 190, duration: 0.4, ease: "power2.in" }, t0 + 3.5);
+          ft(cta, { backgroundColor: "#15803d" }, { backgroundColor: "#111827", duration: 0.2 }, t0 + 3.7);
+        };
+      });
+
+      /* 07 — Lower thirds */
+      cell("07", "LOWER THIRDS", "lt-bold-block · lt-accent · lt-soft-pill", (st) => {
+        const s = mk("div", "s7"); st.appendChild(s);
+        const a = mk("div", "lt", '<div class="a" data-b style="left:0;bottom:44px;height:56px;width:250px;background:#facc15"></div><div class="a" data-t style="left:18px;bottom:62px;font-weight:900;font-size:20px;color:#111;letter-spacing:.02em;white-space:nowrap">JULIO NETO</div><div class="a" style="left:18px;bottom:48px;font-weight:700;font-size:9px;letter-spacing:.2em;color:#111">CRIADOR DE CONTEÚDO</div>');
+        const b = mk("div", "lt", '<div class="a" data-t style="left:24px;bottom:78px;font-weight:900;font-size:26px;color:#fff;white-space:nowrap">JULIO NETO</div><div class="a" data-r style="left:24px;bottom:68px;height:3px;width:170px;background:#22d3ee"></div><div class="a" style="left:24px;bottom:46px;font-weight:700;font-size:11px;letter-spacing:.14em;color:#67e8f9">@JULI0NET0</div>');
+        const c = mk("div", "lt", '<div class="a" data-p style="left:24px;bottom:42px;height:42px;width:230px;border-radius:21px;background:#fff"></div><div class="a" style="left:36px;bottom:56px;width:12px;height:12px;border-radius:50%;background:#22c55e"></div><div class="a" style="left:58px;bottom:51px;font-weight:800;font-size:13px;color:#111">Julio Neto <span style="font-weight:600;color:#6b7280">· IA &amp; edição</span></div>');
+        s.append(a, b, c);
+        const ab = a.querySelector("[data-b]"), at = [...a.children].slice(1), bt = b.querySelector("[data-t]"), br = b.querySelector("[data-r]"), cp = c.querySelector("[data-p]");
+        return (t0) => {
+          [a, b, c].forEach((e, i) => { ft(e, { opacity: 0 }, { opacity: 1, duration: 0.01 }, t0 + i * 1.33); ft(e, { opacity: 1 }, { opacity: 0, duration: 0.2 }, t0 + i * 1.33 + 1.15); });
+          ft(ab, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.35, ease: "expo.out" }, t0);
+          ft(at, { x: -16, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power3.out", stagger: 0.06 }, t0 + 0.15);
+          ft(bt, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, t0 + 1.4);
+          ft(br, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.5, ease: "power2.out" }, t0 + 1.55);
+          ft(cp, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "back.out(1.4)" }, t0 + 2.7);
+        };
+      });
+
+      /* 08 — Multi-device */
+      cell("08", "DEVICES", "multi-device-splay · device-frame", (st) => {
+        const s = mk("div", "s8"); st.appendChild(s);
+        const mkdv = (w, h, l, t, bg) => { const d = mk("div", "dv", `<div style="background:${bg}"></div>`); d.style.cssText = `width:${w}px;height:${h}px;left:${l}px;top:${t}px`; s.appendChild(d); return d; };
+        const dsk = mkdv(230, 146, 107, 52, "linear-gradient(135deg,#6366f1,#ec4899)");
+        const tab = mkdv(120, 160, 40, 62, "linear-gradient(135deg,#f59e0b,#ef4444)");
+        const phn = mkdv(78, 150, 326, 68, "linear-gradient(135deg,#10b981,#3b82f6)");
+        return (t0) => {
+          ft(tab, { x: 120, scale: 0.9, rotation: 0, opacity: 0 }, { x: 0, scale: 1, rotation: -6, opacity: 1, duration: 0.8, ease: "power3.out" }, t0 + 0.3);
+          ft(phn, { x: -230, scale: 0.9, rotation: 0, opacity: 0 }, { x: 0, scale: 1, rotation: 6, opacity: 1, duration: 0.8, ease: "power3.out" }, t0 + 0.3);
+          ft(dsk, { scale: 0.7, opacity: 0, y: 20 }, { scale: 1, opacity: 1, y: 0, duration: 0.7, ease: "back.out(1.6)" }, t0 + 0.1);
+          ft([tab, phn], { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.6);
+          ft(dsk, { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.6);
+        };
+      });
+
+      /* 09 — Notas */
+      cell("09", "APP DE NOTAS", "notes-typing · checklist", (st) => {
+        const s = mk("div", "s9", '<div class="nh"></div>'); st.appendChild(s);
+        const nh = s.querySelector(".nh");
+        const items = ["Gravar o Reel", "Cortar silêncios", "Legenda karaokê", "Publicar às 19h"];
+        const ls = items.map((t, i) => { const l = mk("div", "nl"); l.style.top = 74 + i * 38 + "px"; l.style.left = "58px"; const c = mk("div", "ck"); c.style.top = 76 + i * 38 + "px"; s.append(l, c); return { l, c, t }; });
+        return (t0) => {
+          typeTo(nh, "Hoje ✍️", t0 + 0.1, 0.4);
+          ls.forEach(({ l, c, t }, i) => {
+            typeTo(l, t, t0 + 0.6 + i * 0.5, 0.45);
+            ft(c, { backgroundColor: "#fff7d6" }, { backgroundColor: "#f59e0b", duration: 0.2 }, t0 + 2.0 + i * 0.4);
+            ft(l, { opacity: 1 }, { opacity: 0.45, duration: 0.2 }, t0 + 2.0 + i * 0.4);
+          });
+          ls.forEach(({ l, c }) => { tl.set(l, { textContent: "", opacity: 1 }, t0 + 3.95); tl.set(c, { backgroundColor: "#fff7d6" }, t0 + 3.95); });
+          tl.set(nh, { textContent: "" }, t0 + 3.95);
+        };
+      });
+
+      /* 10 — Mapa com arco */
+      cell("10", "MAPA + ARCO", "world-map · us-map-flow", (st) => {
+        const s = mk("div", "s10"); st.appendChild(s);
+        const svg = svgEl(445, 260); s.appendChild(svg);
+        const land = ["M40,70 C70,40 140,40 170,70 C190,100 170,140 140,150 C110,170 90,150 70,130 C45,115 30,95 40,70 Z", "M250,60 C290,40 350,45 395,75 C415,105 400,150 365,165 C330,185 300,170 285,140 C265,115 235,85 250,60 Z", "M190,185 C215,175 245,185 250,210 C245,235 215,240 195,225 C180,210 180,195 190,185 Z"];
+        land.forEach((d) => DOTS.draw(svg, DOTS.fill(d, { step: 9 }), { r: 2.1, color: "#3b82f6", opacity: 0.55 }));
+        const A = { x: 110, y: 105 }, B = { x: 340, y: 105 }, C = { x: 215, y: 205 };
+        const arc = (p, q, h) => `M${p.x},${p.y} Q${(p.x + q.x) / 2},${Math.min(p.y, q.y) - h} ${q.x},${q.y}`;
+        const mkp = (d, col) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("pathLength", "1"); p.setAttribute("fill", "none"); p.setAttribute("stroke", col); p.setAttribute("stroke-width", 2.5); p.setAttribute("stroke-linecap", "round"); p.style.strokeDasharray = "1 1"; p.style.strokeDashoffset = "1"; svg.appendChild(p); return p; };
+        const p1 = mkp(arc(A, B, 90), "#fbbf24"), p2 = mkp(arc(B, C, 20), "#f472b6"), p3 = mkp(arc(C, A, 20), "#34d399");
+        const pin = (q, col) => { const g = document.createElementNS(NS, "circle"); g.setAttribute("cx", q.x); g.setAttribute("cy", q.y); g.setAttribute("r", 5); g.setAttribute("fill", col); svg.appendChild(g); const r = document.createElementNS(NS, "circle"); r.setAttribute("cx", q.x); r.setAttribute("cy", q.y); r.setAttribute("r", 5); r.setAttribute("fill", "none"); r.setAttribute("stroke", col); r.setAttribute("stroke-width", 2); svg.appendChild(r); return [g, r]; };
+        const pins = [pin(A, "#fbbf24"), pin(B, "#f472b6"), pin(C, "#34d399")];
+        return (t0) => {
+          pins.forEach(([g, r], i) => { ft(g, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, ease: "back.out(3)" }, t0 + 0.2 + i * 0.7); ft(r, { scale: 1, opacity: 0.9, transformOrigin: "50% 50%" }, { scale: 4, opacity: 0, duration: 0.9, ease: "power2.out" }, t0 + 0.3 + i * 0.7); });
+          [p1, p2, p3].forEach((p, i) => { ft(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, t0 + 0.4 + i * 0.7); ft(p, { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.6); });
+          pins.forEach(([g, r]) => ft(g, { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.6));
+        };
+      });
+
+      /* 11 — Antes e depois */
+      cell("11", "ANTES / DEPOIS", "before-after-wipe · comparison-split", (st) => {
+        const s = mk("div", "s11"); st.appendChild(s);
+        const bef = mk("div", "pan", "BRUTO"); bef.style.cssText = "background:linear-gradient(135deg,#52525b,#27272a);color:#fff;filter:saturate(0)";
+        const aft = mk("div", "pan", "EDITADO"); aft.style.cssText = "background:linear-gradient(135deg,#be123c,#b45309 55%,#0e7490);color:#fff;clip-path:inset(0 100% 0 0)";
+        const l1 = mk("div", "pl", "ANTES"); l1.style.left = "12px"; const l2 = mk("div", "pl", "DEPOIS"); l2.style.right = "12px";
+        const bar = mk("div", "a"); bar.style.cssText = "left:0;top:0;width:3px;height:260px;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.8)";
+        const knob = mk("div", "a"); knob.style.cssText = "left:-11px;top:119px;width:25px;height:25px;border-radius:50%;background:#fff;color:#111;display:grid;place-items:center;font-size:11px;font-weight:900"; 
+        bar.appendChild(knob); s.append(bef, aft, l1, l2, bar); [bef, aft, l1, l2, bar, knob].forEach((e) => { e.setAttribute("data-layout-allow-overlap", ""); e.setAttribute("data-layout-allow-occlusion", ""); });
+        return (t0) => {
+          ft(aft, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 1.4, ease: "power2.inOut" }, t0 + 0.4);
+          ft(bar, { x: 0 }, { x: 445, duration: 1.4, ease: "power2.inOut" }, t0 + 0.4);
+          ft(aft, { clipPath: "inset(0 0% 0 0)" }, { clipPath: "inset(0 100% 0 0)", duration: 1.2, ease: "power2.inOut" }, t0 + 2.4);
+          ft(bar, { x: 445 }, { x: 0, duration: 1.2, ease: "power2.inOut" }, t0 + 2.4);
+        };
+      });
+
+      /* 12 — Liquid glass */
+      cell("12", "LIQUID GLASS", "liquid-glass-widgets · aurora", (st) => {
+        const s = mk("div", "s12"); st.appendChild(s);
+        const mb = (l, t, w, c) => { const b = mk("div", "bl"); b.style.cssText = `left:${l}px;top:${t}px;width:${w}px;height:${w}px;background:${c}`; s.appendChild(b); return b; };
+        const b1 = mb(20, 20, 170, "#7c3aed"), b2 = mb(240, 60, 190, "#06b6d4"), b3 = mb(130, 140, 150, "#ec4899");
+        const g1 = mk("div", "gl", "<b>12,4k</b><span>ALCANCE</span>"); g1.style.cssText = "left:34px;top:40px;width:170px;height:92px";
+        const g2 = mk("div", "gl", "<b>+38%</b><span>CRESCIMENTO</span>"); g2.style.cssText = "left:236px;top:84px;width:170px;height:92px";
+        const g3 = mk("div", "gl"); g3.style.cssText = "left:92px;top:176px;width:262px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;letter-spacing:.16em"; g3.textContent = "IA · EDIÇÃO · CONTEÚDO";
+        s.append(g1, g2, g3);
+        return (t0) => {
+          ft(b1, { x: 0, y: 0 }, { x: 90, y: 40, duration: 2, ease: "sine.inOut" }, t0); ft(b1, { x: 90, y: 40 }, { x: 0, y: 0, duration: 2, ease: "sine.inOut" }, t0 + 2);
+          ft(b2, { x: 0, y: 0 }, { x: -80, y: 50, duration: 2, ease: "sine.inOut" }, t0); ft(b2, { x: -80, y: 50 }, { x: 0, y: 0, duration: 2, ease: "sine.inOut" }, t0 + 2);
+          ft(b3, { x: 0, y: 0 }, { x: 70, y: -40, duration: 2, ease: "sine.inOut" }, t0); ft(b3, { x: 70, y: -40 }, { x: 0, y: 0, duration: 2, ease: "sine.inOut" }, t0 + 2);
+          [g1, g2, g3].forEach((g, i) => {
+            ft(g, { y: 30, opacity: 0, scale: 0.92 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, t0 + 0.2 + i * 0.2);
+            ft(g, { y: 0 }, { y: -7, duration: 1.4, ease: "sine.inOut" }, t0 + 1.0 + i * 0.1);
+            ft(g, { y: -7 }, { y: 0, duration: 1.4, ease: "sine.inOut" }, t0 + 2.4 + i * 0.05 > t0 + 3.5 ? t0 + 3.5 : t0 + 2.4 + i * 0.05);
+            ft(g, { opacity: 1 }, { opacity: 0, duration: 0.25 }, t0 + 3.75);
+          });
+        };
+      });
+
+      cells.splice(0, cells.length, ...cells.filter((c) => c.n === "11"));
+
+      const fns = cells.map((c, i) => {
+        const el = mk("div", "cell"); el.id = "c" + c.n;
+        el.style.left = "0px"; el.style.top = "0px";
+        const st = mk("div", "st"); el.appendChild(st);
+        el.appendChild(mk("div", "lb", `<b><i>${c.n}</i>${c.name}</b><span>${c.tech}</span>`));
+        root.appendChild(el);
+        return c.build(st);
+      });
+      for (let k = 0; k < LOOPS; k++) fns.forEach((f) => f(k * L));
+      (window.__timelines ||= {})["main"] = tl;
+      if (window.self === window.top && !navigator.webdriver) tl.repeat(-1).play();
+    </script>
+  </body>
+</html>

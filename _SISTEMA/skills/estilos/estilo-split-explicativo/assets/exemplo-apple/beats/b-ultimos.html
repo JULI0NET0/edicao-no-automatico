@@ -1,0 +1,162 @@
+<!doctype html>
+<!--
+  Beat B — "DESDE O COMEÇO / SEMPRE OS [slot]". The slot rolls PRIMEIROS →
+  PIONEIROS and locks on ÚLTIMOS (yellow plate) as it is spoken.
+  Mechanic from kinetic-type-swap: every option shares one CSS grid cell so
+  the slot keeps the widest option's width; the outgoing word whips up out
+  of the mask (power4.in), the incoming one rises in (power4.out).
+  Mounted at global 2.62 — all cue constants below are GLOBAL seconds.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          font-family: "Montserrat", sans-serif;
+        }
+        #b-block {
+          position: absolute;
+          left: 0;
+          width: 1080px;
+          top: 1130px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+        #b-kicker {
+          padding: 10px 20px 12px;
+          background: rgba(10, 10, 10, 0.88);
+          color: rgba(255, 255, 255, 0.85);
+          font-weight: 800;
+          font-size: 40px;
+          letter-spacing: 0.18em;
+          border-radius: 8px;
+          opacity: 0;
+        }
+        #b-line {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+          white-space: nowrap;
+          opacity: 0;
+        }
+        #b-prefix {
+          padding: 10px 22px 14px;
+          background: #0A0A0A;
+          color: #fff;
+          font-weight: 900;
+          font-size: 84px;
+          line-height: 1;
+          white-space: nowrap;
+          border-radius: 12px;
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+        }
+        #b-slot {
+          position: relative;
+          display: inline-grid;
+          overflow: hidden;
+          padding: 10px 26px 14px;
+          background: #0A0A0A;
+          border-radius: 12px;
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+        }
+        #b-slot > span {
+          position: relative;
+          grid-area: 1 / 1;
+          font-weight: 900;
+          font-size: 110px;
+          line-height: 1;
+          white-space: nowrap;
+          color: rgba(255, 255, 255, 0.55);
+          text-align: center;
+        }
+        #b-final {
+          color: #0A0A0A !important;
+        }
+        #b-slot > #b-plate {
+          position: absolute;
+          inset: 0;
+          background: #F97316;
+          border-radius: 12px;
+          transform: scaleX(0);
+          transform-origin: 0% 50%;
+        }
+        #b-slot-inner {
+          position: relative;
+          display: inline-grid;
+        }
+      </style>
+      <div id="root" data-composition-id="b-ultimos" data-width="1080" data-height="1920">
+        <div id="b-block">
+          <div id="b-kicker">DESDE O COMEÇO</div>
+          <div id="b-line">
+            <span id="b-prefix">SEMPRE OS</span>
+            <span id="b-slot">
+              <span id="b-w0">PRIMEIROS?</span>
+              <span id="b-w1">PIONEIROS?</span>
+              <span id="b-final">ÚLTIMOS</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var OFFSET = 2.62; // host data-start
+          var T = function (g) {
+            return g - OFFSET;
+          };
+          var tl = gsap.timeline({ paused: true });
+          var words = ["#b-w0", "#b-w1", "#b-final"];
+          var swaps = [T(3.95), T(4.18), T(4.47)];
+
+          // The yellow plate sits inside the slot, behind the final word.
+          var slot = document.getElementById("b-slot");
+          var plate = document.createElement("span");
+          plate.id = "b-plate";
+          slot.insertBefore(plate, slot.firstChild);
+          gsap.set(words, { yPercent: 112, opacity: 0 });
+
+          tl.fromTo("#b-kicker", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.25, ease: "power3.out" }, T(2.7));
+          tl.fromTo(
+            "#b-line",
+            { opacity: 0, y: 30, filter: "blur(8px)" },
+            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.25, ease: "power3.out" },
+            T(3.72),
+          );
+          // Slot roll.
+          words.forEach(function (w, i) {
+            var at = swaps[i];
+            if (i > 0) {
+              tl.to(words[i - 1], { yPercent: -112, duration: 0.12, ease: "power4.in" }, at);
+              tl.set(words[i - 1], { opacity: 0 }, at + 0.12);
+            }
+            tl.set(w, { opacity: 1 }, at + (i > 0 ? 0.06 : 0));
+            tl.to(w, { yPercent: 0, duration: i === 2 ? 0.2 : 0.14, ease: i === 2 ? "back.out(2.2)" : "power4.out" }, at + (i > 0 ? 0.06 : 0));
+          });
+          // Lock: yellow plate wipes in behind ÚLTIMOS, line punches.
+          tl.to(plate, { scaleX: 1, duration: 0.16, ease: "power3.out" }, swaps[2] + 0.04);
+          tl.to("#b-line", { scale: 1.08, duration: 0.08, ease: "power2.out" }, swaps[2] + 0.04);
+          tl.to("#b-line", { scale: 1, duration: 0.3, ease: "back.out(2.5)" }, swaps[2] + 0.12);
+          // Exit with the whip into the split screen (leftward blur).
+          tl.to(
+            "#b-block",
+            { x: -420, opacity: 0, filter: "blur(14px)", duration: 0.2, ease: "power3.in" },
+            T(5.02),
+          );
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["b-ultimos"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

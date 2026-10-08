@@ -1,0 +1,212 @@
+<!doctype html>
+<!--
+  Beat F — full frame, footage dimmed by the host. A glass grid assembles
+  (stagger-cascade, but each tile lands on its spoken word), each tile gets a
+  "#1" seal (spring-pop: visible near-rest scale, one overshoot, settle), and
+  the empty foldable slot resolves on "a mesma coisa" under a light-sweep-pass
+  (one traveling key-light band across the whole grid).
+  Mounted at global 22.62 — cue constants below are GLOBAL seconds.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          font-family: "Montserrat", sans-serif;
+        }
+        #f-grid {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 1080px;
+          height: 1920px;
+        }
+        .f-tile {
+          position: absolute;
+          width: 420px;
+          height: 420px;
+          border-radius: 44px;
+          background: linear-gradient(180deg, rgba(28, 28, 28, 0.72), rgba(10, 10, 10, 0.62));
+          border: 2px solid rgba(255, 255, 255, 0.16);
+          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          overflow: hidden;
+          opacity: 0;
+        }
+        .f-tile img {
+          position: absolute;
+          left: 50px;
+          top: 34px;
+          width: 320px;
+          height: 290px;
+          object-fit: contain;
+          filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.55));
+        }
+        .f-name {
+          position: absolute;
+          bottom: 26px;
+          left: 0;
+          width: 100%;
+          text-align: center;
+          font-family: "League Gothic", sans-serif;
+          font-size: 64px;
+          line-height: 1;
+          color: #fff;
+        }
+        .f-seal {
+          position: absolute;
+          width: 104px;
+          height: 104px;
+          border-radius: 50%;
+          background: #F97316;
+          color: #0A0A0A;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 900;
+          font-size: 40px;
+          box-shadow: 0 10px 34px rgba(249, 115, 22, 0.55);
+          opacity: 0;
+        }
+        #f-slot {
+          border: 4px dashed rgba(249, 115, 22, 0.7);
+          background: rgba(249, 115, 22, 0.05);
+        }
+        #f-slot .f-q {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: "League Gothic", sans-serif;
+          font-size: 230px;
+          color: rgba(249, 115, 22, 0.85);
+        }
+        #f-slot img {
+          opacity: 0;
+        }
+        #f-sweep {
+          position: absolute;
+          left: -600px;
+          top: 0;
+          width: 500px;
+          height: 1920px;
+          background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+          transform: skewX(-18deg);
+          mix-blend-mode: overlay;
+          opacity: 0;
+        }
+        #f-title {
+          position: absolute;
+          left: 0;
+          width: 1080px;
+          top: 1790px;
+          text-align: center;
+          font-weight: 800;
+          font-size: 28px;
+          letter-spacing: 0.34em;
+          color: rgba(255, 255, 255, 0.7);
+          opacity: 0;
+        }
+      </style>
+      <div id="root" data-composition-id="f-grade" data-width="1080" data-height="1920">
+        <div id="f-grid"></div>
+        <div id="f-title">EM TODA CATEGORIA QUE ENTROU</div>
+        <div id="f-sweep"></div>
+      </div>
+      <script>
+        (function () {
+          var OFFSET = 22.62;
+          var T = function (g) {
+            return g - OFFSET;
+          };
+          // Two columns of 420 + 40 gap, centered: x = 100 / 560.
+          var TILES = [
+            { img: "phone", name: "CELULAR", x: 100, y: 420, at: 23.2 },
+            { img: "watch", name: "RELÓGIO", x: 560, y: 420, at: 24.36 },
+            { img: "earbuds", name: "FONE", x: 100, y: 880, at: 25.45 },
+            { img: "laptop", name: "COMPUTADOR", x: 560, y: 880, at: 26.47 },
+            { img: "fold-silver", name: "DOBRÁVEL", x: 330, y: 1340, at: 28.18, slot: true },
+          ];
+          var RESOLVE = 29.36; // "mesma coisa"
+          var EXIT = 29.62;
+
+          var grid = document.getElementById("f-grid");
+          var tiles = TILES.map(function (t) {
+            var d = document.createElement("div");
+            d.className = "f-tile";
+            if (t.slot) d.id = "f-slot";
+            d.style.left = t.x + "px";
+            d.style.top = t.y + "px";
+            d.innerHTML =
+              '<img src="assets/img/' + t.img + '.png" /><div class="f-name"></div>' + (t.slot ? '<div class="f-q">?</div>' : "");
+            d.querySelector(".f-name").textContent = t.name;
+            grid.appendChild(d);
+            var seal = document.createElement("div");
+            seal.className = "f-seal";
+            seal.textContent = "#1";
+            seal.style.left = t.x + 420 - 80 + "px";
+            seal.style.top = t.y - 26 + "px";
+            grid.appendChild(seal);
+            return { el: d, seal: seal, t: t };
+          });
+
+          var tl = gsap.timeline({ paused: true });
+          tl.fromTo("#f-title", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out", immediateRender: false }, T(23.0));
+
+          tiles.forEach(function (o) {
+            var at = o.t.at;
+            tl.fromTo(
+              o.el,
+              { opacity: 0, y: 60, scale: 0.86, rotation: o.t.x < 300 ? -3 : 3 },
+              { opacity: 1, y: 0, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(1.7)", immediateRender: false },
+              T(at - 0.2),
+            );
+            if (!o.t.slot) {
+              // spring-pop seal: from a visible near-rest scale, one overshoot.
+              tl.fromTo(
+                o.seal,
+                { opacity: 0, scale: 0.55 },
+                { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(3)", immediateRender: false },
+                T(at + 0.25),
+              );
+            }
+          });
+          // Foldable resolves: "?" out, product in, seal, one light sweep.
+          var slot = tiles[4];
+          tl.to(slot.el.querySelector(".f-q"), { opacity: 0, scale: 1.4, duration: 0.2, ease: "power2.in" }, T(RESOLVE - 0.25));
+          tl.to(slot.el.querySelector("img"), { opacity: 1, duration: 0.25, ease: "power2.out" }, T(RESOLVE - 0.12));
+          tl.fromTo(
+            slot.el.querySelector("img"),
+            { scale: 0.7 },
+            { scale: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false },
+            T(RESOLVE - 0.12),
+          );
+          tl.to(slot.el, { borderColor: "rgba(249, 115, 22, 0.95)", borderStyle: "solid", duration: 0.01 }, T(RESOLVE - 0.1));
+          tl.fromTo(
+            slot.seal,
+            { opacity: 0, scale: 0.55 },
+            { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(3)", immediateRender: false },
+            T(RESOLVE),
+          );
+          tl.set("#f-sweep", { opacity: 1 }, T(RESOLVE - 0.9));
+          tl.fromTo("#f-sweep", { x: 0 }, { x: 2300, duration: 1.0, ease: "sine.inOut", immediateRender: false }, T(RESOLVE - 0.9));
+
+          // Exit into the flash cut.
+          tl.to(["#f-grid", "#f-title"], { opacity: 0, scale: 1.06, duration: 0.18, ease: "power2.in" }, T(EXIT));
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["f-grade"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

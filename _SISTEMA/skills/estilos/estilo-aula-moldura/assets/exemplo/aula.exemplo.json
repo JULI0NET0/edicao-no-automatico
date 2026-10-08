@@ -1,0 +1,20 @@
+{
+  "video": "assets/aula00.mp4",
+  "inicio": 1.5,
+  "fim": 59.5,
+  "kicker": "Aula 00 · Boas-vindas",
+  "titulo": "Edição no Automático",
+  "encerramento": 3.6,
+  "palavrasPorFrase": 4,
+  "correcoes": {
+    "Cloud": "Claude",
+    "Codec": "Codex"
+  },
+  "juncoes": [
+    [
+      "da",
+      "Vinci",
+      "DaVinci"
+    ]
+  ]
+}

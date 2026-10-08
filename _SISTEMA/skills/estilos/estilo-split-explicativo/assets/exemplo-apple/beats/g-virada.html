@@ -1,0 +1,291 @@
+<!doctype html>
+<!--
+  Beat G — the turn. editorial-flash-overlay (white wash + screen-blended
+  radial core + warm/cool sweep, ~0.05s attack, soft decay) cuts into
+  "SÓ QUE A / GRANDE / DIFERENÇA" word slams, then an mk-line-graph card:
+  two SVG series draw on (stroke-dashoffset) with value tags riding the draw
+  front, both rising — "o mercado inteiro ganha". Illustrative, labelled.
+  Mounted at global 29.6 — cue constants below are GLOBAL seconds.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          font-family: "Montserrat", sans-serif;
+        }
+        /* ---- flash ---- */
+        #g-flash {
+          position: absolute;
+          inset: -12%;
+          overflow: hidden;
+        }
+        .g-layer {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+        }
+        #g-wash {
+          background: rgb(255, 253, 250);
+        }
+        #g-core {
+          inset: -18%;
+          background: radial-gradient(
+            ellipse 80% 70% at 50% 40%,
+            #fff 0%,
+            rgba(255, 255, 255, 0.98) 20%,
+            rgba(255, 253, 250, 0.86) 45%,
+            rgba(255, 174, 105, 0.32) 67%,
+            rgba(255, 174, 105, 0) 86%
+          );
+          mix-blend-mode: screen;
+        }
+        #g-sweep {
+          inset: -28%;
+          background: linear-gradient(
+            108deg,
+            rgba(0, 0, 0, 0) 21%,
+            rgba(255, 174, 105, 0.1) 38%,
+            rgba(255, 253, 250, 0.9) 49%,
+            #fff 53%,
+            rgba(183, 218, 255, 0.24) 62%,
+            rgba(0, 0, 0, 0) 78%
+          );
+          mix-blend-mode: screen;
+        }
+        /* ---- word slams ---- */
+        #g-words {
+          position: absolute;
+          left: 0;
+          width: 1080px;
+          top: 1120px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        #g-pre {
+          padding: 10px 22px 12px;
+          background: #0A0A0A;
+          color: #fff;
+          font-weight: 900;
+          font-size: 56px;
+          border-radius: 10px;
+          opacity: 0;
+        }
+        .g-big {
+          font-family: "League Gothic", sans-serif;
+          font-size: 250px;
+          line-height: 0.9;
+          color: #fff;
+          text-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+          opacity: 0;
+        }
+        #g-w2 {
+          color: #F97316;
+          text-shadow: 0 0 40px rgba(249, 115, 22, 0.4), 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+        /* ---- graph card ---- */
+        #g-card {
+          position: absolute;
+          left: 50px;
+          top: 1030px;
+          width: 980px;
+          height: 740px;
+          border-radius: 44px;
+          background: linear-gradient(180deg, rgba(28, 28, 28, 0.9), rgba(10, 10, 10, 0.92));
+          border: 2px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+          overflow: hidden;
+          opacity: 0;
+        }
+        #g-head {
+          position: absolute;
+          left: 50px;
+          top: 44px;
+          width: 880px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        #g-title {
+          font-weight: 800;
+          font-size: 26px;
+          letter-spacing: 0.3em;
+          color: #A8A8A8;
+        }
+        #g-tag {
+          font-weight: 600;
+          font-size: 20px;
+          letter-spacing: 0.12em;
+          color: rgba(255, 255, 255, 0.42);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          padding: 4px 14px;
+        }
+        #g-svg {
+          position: absolute;
+          left: 50px;
+          top: 120px;
+          overflow: visible;
+        }
+        .g-tagline {
+          position: absolute;
+          padding: 8px 16px 10px;
+          border-radius: 12px;
+          font-weight: 900;
+          font-size: 30px;
+          white-space: nowrap;
+          opacity: 0;
+        }
+        #g-tag-a {
+          background: #F97316;
+          color: #0A0A0A;
+        }
+        #g-tag-b {
+          background: #282828;
+          color: #fff;
+        }
+        #g-foot {
+          position: absolute;
+          left: 50px;
+          bottom: 44px;
+          width: 880px;
+          text-align: center;
+          font-family: "League Gothic", sans-serif;
+          font-size: 76px;
+          color: #fff;
+          opacity: 0;
+        }
+        #g-foot b {
+          color: #F97316;
+          font-weight: 400;
+        }
+      </style>
+      <div id="root" data-composition-id="g-virada" data-width="1080" data-height="1920">
+        <div id="g-words">
+          <div id="g-pre">SÓ QUE A</div>
+          <div class="g-big" id="g-w1">GRANDE</div>
+          <div class="g-big" id="g-w2">DIFERENÇA</div>
+        </div>
+        <div id="g-card">
+          <div id="g-head">
+            <div id="g-title">QUEM GANHA COM ISSO</div>
+            <div id="g-tag">ILUSTRATIVO</div>
+          </div>
+          <svg id="g-svg" width="880" height="420" viewBox="0 0 880 420">
+            <line x1="0" y1="400" x2="880" y2="400" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+            <line x1="0" y1="266" x2="880" y2="266" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+            <line x1="0" y1="133" x2="880" y2="133" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+            <path id="g-pb" d="M0 360 C 120 350, 220 330, 330 300 S 560 220, 660 185 S 800 130, 860 112" fill="none" stroke="#A8A8A8" stroke-width="12" stroke-linecap="round" />
+            <path id="g-pa" d="M0 390 C 140 380, 240 330, 340 270 S 560 170, 660 130 S 800 80, 860 64" fill="none" stroke="#F97316" stroke-width="12" stroke-linecap="round" />
+            <circle id="g-da" r="16" fill="#F97316" />
+            <circle id="g-db" r="16" fill="#A8A8A8" />
+          </svg>
+          <div class="g-tagline" id="g-tag-a">APPLE</div>
+          <div class="g-tagline" id="g-tag-b">CONCORRENTES</div>
+          <div id="g-foot">O MERCADO <b>INTEIRO</b> GANHA</div>
+        </div>
+        <div id="g-flash">
+          <div id="g-wash" class="g-layer"></div>
+          <div id="g-core" class="g-layer"></div>
+          <div id="g-sweep" class="g-layer"></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var OFFSET = 29.6;
+          var T = function (g) {
+            return g - OFFSET;
+          };
+          var HIT = 29.78;
+          var CARD_IN = 31.38;
+          var DRAW_A = 31.7;
+          var DRAW_END = 34.26; // "ganham"
+          var EXIT = 35.55;
+          var tl = gsap.timeline({ paused: true });
+
+          // ---- editorial flash ----
+          tl.to("#g-wash", { opacity: 0.92, duration: 0.04, ease: "power4.in" }, T(HIT));
+          tl.fromTo("#g-core", { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 0.05, ease: "power4.in", immediateRender: false }, T(HIT - 0.01));
+          tl.fromTo("#g-sweep", { opacity: 0, xPercent: -12 }, { opacity: 0.9, xPercent: 8, duration: 0.04, ease: "power4.in", immediateRender: false }, T(HIT));
+          tl.to("#g-wash", { opacity: 0, duration: 0.18, ease: "power3.out" }, T(HIT + 0.04));
+          tl.to("#g-core", { opacity: 0, scale: 1.18, duration: 0.34, ease: "power2.out" }, T(HIT + 0.04));
+          tl.to("#g-sweep", { opacity: 0, xPercent: 28, duration: 0.3, ease: "power2.out" }, T(HIT + 0.04));
+
+          // ---- word slams ----
+          tl.fromTo("#g-pre", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.2, ease: "power3.out", immediateRender: false }, T(29.82));
+          [
+            ["#g-w1", 30.4],
+            ["#g-w2", 30.68],
+          ].forEach(function (w) {
+            tl.fromTo(w[0], { opacity: 0, scale: 2.4 }, { opacity: 1, scale: 1, duration: 0.12, ease: "power2.in", immediateRender: false }, T(w[1] - 0.1));
+            tl.to(w[0], { scale: 1.05, duration: 0.06, ease: "power2.out" }, T(w[1] + 0.02));
+            tl.to(w[0], { scale: 1, duration: 0.24, ease: "back.out(2.5)" }, T(w[1] + 0.08));
+          });
+          tl.to("#g-words", { y: -120, opacity: 0, filter: "blur(10px)", duration: 0.22, ease: "power3.in" }, T(CARD_IN - 0.16));
+
+          // ---- graph card ----
+          tl.fromTo("#g-card", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.5)", immediateRender: false }, T(CARD_IN));
+          var pa = document.getElementById("g-pa");
+          var pb = document.getElementById("g-pb");
+          var la = pa.getTotalLength();
+          var lb = pb.getTotalLength();
+          var svgLeft = 50;
+          var svgTop = 120;
+          var tagA = document.getElementById("g-tag-a");
+          var tagB = document.getElementById("g-tag-b");
+          function draw(p) {
+            var ea = p;
+            var eb = p;
+            pa.style.strokeDasharray = la + " " + la;
+            pa.style.strokeDashoffset = String(la * (1 - ea));
+            pb.style.strokeDasharray = lb + " " + lb;
+            pb.style.strokeDashoffset = String(lb * (1 - eb));
+            var A = pa.getPointAtLength(la * ea);
+            var B = pb.getPointAtLength(lb * eb);
+            document.getElementById("g-da").setAttribute("cx", A.x.toFixed(1));
+            document.getElementById("g-da").setAttribute("cy", A.y.toFixed(1));
+            document.getElementById("g-db").setAttribute("cx", B.x.toFixed(1));
+            document.getElementById("g-db").setAttribute("cy", B.y.toFixed(1));
+            // Value tags ride the draw front (clamped inside the card).
+            tagA.style.left = Math.min(svgLeft + A.x - 40, 700) + "px";
+            tagA.style.top = Math.max(svgTop + A.y - 74, 104) + "px";
+            tagB.style.left = Math.min(svgLeft + B.x - 60, 620) + "px";
+            tagB.style.top = svgTop + B.y + 26 + "px";
+          }
+          draw(0);
+          var drv = { p: 0 };
+          tl.to(
+            drv,
+            {
+              p: 1,
+              duration: DRAW_END - DRAW_A,
+              ease: "power1.inOut",
+              onUpdate: function () {
+                draw(drv.p);
+              },
+            },
+            T(DRAW_A),
+          );
+          tl.fromTo([tagA, tagB], { opacity: 0 }, { opacity: 1, duration: 0.25, stagger: 0.8, ease: "power2.out", immediateRender: false }, T(DRAW_A + 0.2));
+          // "ganham": both tags punch, footer lands.
+          tl.to([tagA, tagB], { scale: 1.15, duration: 0.08, ease: "power2.out" }, T(DRAW_END));
+          tl.to([tagA, tagB], { scale: 1, duration: 0.3, ease: "back.out(3)" }, T(DRAW_END + 0.08));
+          tl.fromTo("#g-foot", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.35, ease: "back.out(1.8)", immediateRender: false }, T(DRAW_END + 0.05));
+          // Exit into the split screen.
+          tl.to("#g-card", { y: 900, duration: 0.35, ease: "power3.in" }, T(EXIT));
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["g-virada"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

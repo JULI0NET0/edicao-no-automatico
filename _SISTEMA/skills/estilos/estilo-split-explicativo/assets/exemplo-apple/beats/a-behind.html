@@ -1,0 +1,141 @@
+<!doctype html>
+<!--
+  Beat A (behind layer) — "poster stage". On "Apple" the room cuts away to a
+  dark stage with a giant stretched "APPLE"; the subject cutout (#cam-sub,
+  scaled down by the host camera) stands in front, hair overlapping the
+  letters. Adapted from caption-parallax-layers' behind layer (stretched
+  display type under a subject matte) + waterfall-entry letter arrival +
+  ambient-glow-bloom behind the hero.
+  Local time == global time (mounted at 0).
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+        }
+        #a-stage {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          background:
+            radial-gradient(ellipse 70% 38% at 50% 78%, rgba(249, 115, 22, 0.38), rgba(249, 115, 22, 0) 70%),
+            radial-gradient(ellipse 90% 60% at 50% 30%, #1C1C1C 0%, #0A0A0A 60%, #050505 100%);
+        }
+        #a-glow {
+          position: absolute;
+          left: 90px;
+          top: 520px;
+          width: 900px;
+          height: 900px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(249, 115, 22, 0.42), rgba(249, 115, 22, 0) 65%);
+        }
+        #a-word {
+          position: absolute;
+          left: 0;
+          top: 70px;
+          width: 1080px;
+          display: flex;
+          justify-content: center;
+          transform-origin: 50% 0%;
+        }
+        .a-mask {
+          display: inline-block;
+          overflow: hidden;
+          padding: 0 2px;
+        }
+        .a-letter {
+          display: inline-block;
+          font-family: "League Gothic", sans-serif;
+          font-weight: 400;
+          line-height: 0.92;
+          color: #FFFFFF;
+          text-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+        }
+        #a-kicker {
+          position: absolute;
+          left: 0;
+          width: 1080px;
+          top: 40px;
+          text-align: center;
+          font-family: "Montserrat", sans-serif;
+          font-weight: 800;
+          font-size: 30px;
+          letter-spacing: 0.42em;
+          color: rgba(255, 255, 255, 0.55);
+          opacity: 0;
+        }
+      </style>
+      <div id="root" data-composition-id="a-behind" data-width="1080" data-height="1920">
+        <div id="a-stage">
+          <div id="a-glow"></div>
+          <div id="a-kicker">A VERDADE SOBRE A</div>
+          <div id="a-word"></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var WORD = "APPLE";
+          var CUT = 0.24; // hard cut to the stage on "Apple" (0.29)
+          var HIT = 1.69; // "produto"
+          var EXIT = 2.6; // cut back to the room
+
+          var host = document.getElementById("a-word");
+          var ctx = document.createElement("canvas").getContext("2d");
+          var size = 900;
+          while (size > 200) {
+            ctx.font = "400 " + size + "px \"League Gothic\"";
+            if (ctx.measureText(WORD).width + WORD.length * 4 <= 1020) break;
+            size -= 4;
+          }
+          var letters = WORD.split("").map(function (ch) {
+            var m = document.createElement("span");
+            m.className = "a-mask";
+            var l = document.createElement("span");
+            l.className = "a-letter";
+            l.textContent = ch;
+            l.style.fontSize = size + "px";
+            m.appendChild(l);
+            host.appendChild(m);
+            return l;
+          });
+
+          var tl = gsap.timeline({ paused: true });
+          gsap.set(letters, { yPercent: 105 });
+          gsap.set(host, { scaleY: 1.08 });
+
+          tl.set("#a-stage", { opacity: 1 }, CUT);
+          tl.fromTo("#a-kicker", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, CUT + 0.05);
+          // Waterfall arrival: each letter whips up before the previous settles.
+          letters.forEach(function (l, i) {
+            tl.fromTo(
+              l,
+              { yPercent: 105 },
+              { yPercent: 0, duration: 0.36, ease: "power4.out", immediateRender: false },
+              CUT + 0.02 + i * 0.05,
+            );
+          });
+          // Parallax drift: title creeps slower than the subject.
+          tl.fromTo(host, { scale: 1 }, { scale: 1.035, duration: EXIT - CUT, ease: "none" }, CUT);
+          // Impact on "produto": title kicks back, glow blooms.
+          tl.to(host, { scale: 1.0, duration: 0.08, ease: "expo.out" }, HIT);
+          tl.to(host, { scale: 1.035, duration: 0.5, ease: "power2.out" }, HIT + 0.08);
+          tl.fromTo("#a-glow", { scale: 1, opacity: 1 }, { scale: 1.25, opacity: 0.6, duration: 0.5, ease: "expo.out" }, HIT);
+          // Hard cut back to the room.
+          tl.set("#a-stage", { opacity: 0 }, EXIT);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["a-behind"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=445, height=300" />
+    <title>moodboard-camera · célula 06</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "HandBradley"; src: local("Bradley Hand Bold"), local("BradleyHandITCTT-Bold"); font-weight: 700; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; background: #0b0b0f; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #0b0b0f; font-family: Montserrat, sans-serif; color: #fff; }
+      .hd { position: absolute; left: 40px; top: 38px; font-weight: 800; font-size: 22px; letter-spacing: 0.22em; }
+      .hd2 { position: absolute; right: 40px; top: 42px; font-weight: 600; font-size: 14px; letter-spacing: 0.18em; color: #8a8a96; }
+      .cell { position: absolute; width: 445px; height: 300px; border-radius: 14px; overflow: hidden; background: #15151c; }
+      .st { position: absolute; left: 0; top: 0; width: 445px; height: 260px; overflow: hidden; background: #000; }
+      .lb { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: #15151c; }
+      .lb b { font-weight: 800; font-size: 13px; letter-spacing: 0.14em; }
+      .lb b i { font-style: normal; color: #8a8a96; margin-right: 8px; }
+      .lb span { font-weight: 600; font-size: 11px; letter-spacing: 0.1em; color: #8a8a96; }
+      .a { position: absolute; }
+      svg { position: absolute; left: 0; top: 0; overflow: visible; }
+      .fr { position: absolute; left: 0; top: 0; width: 445px; height: 260px; object-fit: cover; object-position: 50% 14%; display: block; }
+      .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 600; }
+      .chip { background: rgba(0,0,0,.72); color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; letter-spacing: .08em; }
+      .tag { position: absolute; left: 10px; bottom: 10px; font-weight: 800; font-size: 10px; letter-spacing: .18em; background: rgba(0,0,0,.72); color: #fff; padding: 4px 9px; border-radius: 4px; }
+    </style>
+    <style>#root { width: 445px !important; height: 300px !important; }</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="12" data-width="445" data-height="300">
+    </div>
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const root = document.getElementById("root");
+      const L = 4, LOOPS = 3;
+      const tl = gsap.timeline({ paused: true });
+      const ft = (tg, a, b, p) => tl.fromTo(tg, a, { ...b, immediateRender: false }, p);
+      const mk = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+      const svgEl = (w, h) => { const s = document.createElementNS(NS, "svg"); s.setAttribute("width", w); s.setAttribute("height", h); s.setAttribute("viewBox", `0 0 ${w} ${h}`); return s; };
+      const allow = (e) => { ["overlap", "occlusion", "overflow"].forEach((k) => e.setAttribute("data-layout-allow-" + k, "")); return e; };
+      const prox = (t, dur, fn, ease) => { const o = { v: 0 }; tl.fromTo(o, { v: 0 }, { v: 1, duration: dur, ease: ease || "none", onUpdate: () => fn(o.v), immediateRender: false }, t); };
+      const FR = ["f0433_5", "ffim_8", "f2612_5", "ffim_40", "f0433_20", "f2612_15"];
+      const img = (n, st, extra) => { const i = mk("img", "fr"); i.src = `../_fontes/moodboard-camera/assets/${FR[n]}.jpg`; i.alt = ""; if (extra) i.style.cssText += extra; st.appendChild(i); return i; };
+      const cells = [];
+      const cell = (n, name, tech, build) => cells.push({ n, name, tech, build });
+      const tcode = (s) => { const f = Math.floor(s * 30); return String(Math.floor(f / 1800)).padStart(2, "0") + ":" + String(Math.floor(f / 30) % 60).padStart(2, "0") + ":" + String(f % 30).padStart(2, "0"); };
+
+      /* 01 — Camera shake (handheld) */
+      cell("01", "CAMERA SHAKE", "camera-shake · handheld", (st) => {
+        const i = img(0, st); i.style.transformOrigin = "50% 50%";
+        st.appendChild(mk("div", "tag", "HANDHELD"));
+        const sh = (u) => { // u em segundos do loop; amplitude sobe, mantém e cai
+          const env = Math.min(1, Math.max(0, (u - 0.3) / 0.8)) * Math.min(1, Math.max(0, (3.6 - u) / 0.5));
+          const x = (5 * Math.sin(u * 31) + 3 * Math.sin(u * 57 + 1.3) + 2 * Math.sin(u * 83 + 2.1)) * env;
+          const y = (4 * Math.sin(u * 27 + 0.7) + 3 * Math.sin(u * 61 + 2.6) + 1.5 * Math.sin(u * 97)) * env;
+          const r = (0.7 * Math.sin(u * 23 + 0.4) + 0.4 * Math.sin(u * 71)) * env;
+          i.style.transform = `translate(${x.toFixed(2)}px,${y.toFixed(2)}px) rotate(${r.toFixed(3)}deg) scale(1.1)`;
+        };
+        sh(0);
+        return (t0) => prox(t0, 4, (v) => sh(v * 4));
+      });
+
+      /* 02 — Dolly zoom */
+      cell("02", "DOLLY ZOOM", "camera-dolly-zoom", (st) => {
+        const bg = img(1, st); bg.style.transformOrigin = "50% 40%";
+        const cir = mk("div", "a"); cir.style.cssText = "left:122px;top:30px;width:200px;height:200px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px rgba(255,255,255,.85),0 10px 30px rgba(0,0,0,.6)";
+        const ci = mk("img", "fr"); ci.src = `../_fontes/moodboard-camera/assets/${FR[1]}.jpg`; ci.alt = ""; ci.style.cssText = "left:-122px;top:-30px";
+        cir.appendChild(ci); st.append(cir);
+        st.appendChild(mk("div", "tag", "DOLLY ZOOM"));
+        const f = (p) => { bg.style.transform = `scale(${1 + 0.55 * p})`; bg.style.filter = `blur(${(p * 2).toFixed(2)}px) brightness(${1 - 0.25 * p})`; };
+        f(0);
+        return (t0) => { prox(t0 + 0.2, 1.7, f, "sine.inOut"); prox(t0 + 2.1, 1.7, (v) => f(1 - v), "sine.inOut"); };
+      });
+
+      /* 03 — Punch-in */
+      cell("03", "PUNCH-IN", "yt-camera-move · zoom de impacto", (st) => {
+        const i = img(2, st);
+        const fl = allow(mk("div", "a")); fl.style.cssText = "inset:0;background:#fff;opacity:0";
+        const lab = mk("div", "tag chip", "ZOOM 1.0×"); lab.style.fontFamily = "JetBrains Mono, monospace"; st.append(fl, lab);
+        const set = (s, ox, oy) => { i.style.transformOrigin = `${ox}% ${oy}%`; i.style.transform = `scale(${s})`; lab.textContent = "ZOOM " + s.toFixed(1) + "×"; };
+        set(1, 50, 38);
+        return (t0) => {
+          const pun = (a, s, ox, oy, back) => {
+            prox(a, 0.14, (v) => set(1 + (s - 1) * v, ox, oy), "power4.out");
+            ft(fl, { opacity: 0 }, { opacity: 0.35, duration: 0.04 }, a); ft(fl, { opacity: 0.35 }, { opacity: 0, duration: 0.12 }, a + 0.04);
+            prox(back, 0.3, (v) => set(s - (s - 1) * v, ox, oy), "power2.inOut");
+          };
+          pun(t0 + 0.7, 1.55, 50, 36, t0 + 1.6);
+          pun(t0 + 2.3, 1.95, 50, 32, t0 + 3.3);
+          tl.set(i, { scale: 1 }, t0 + 3.99);
+        };
+      });
+
+      /* 04 — Speed ramp + freeze */
+      cell("04", "SPEED RAMP + FREEZE", "beat-freeze-cut", (st) => {
+        const ims = FR.map((_, k) => { const e = img(k, st); e.style.opacity = k === 0 ? 1 : 0; return e; });
+        const fl = allow(mk("div", "a")); fl.style.cssText = "inset:0;background:#fff;opacity:0";
+        const sp = mk("div", "a mono chip", "1×"); sp.style.cssText += ";right:10px;top:10px;font-size:15px";
+        const stamp = mk("div", "a", "FREEZE"); stamp.style.cssText = "left:0;right:0;top:100px;text-align:center;font-weight:900;font-size:44px;letter-spacing:.12em;color:#fff;background:rgba(0,0,0,.55);padding:6px 0;opacity:0";
+        st.append(fl, sp, stamp);
+        return (t0) => {
+          const times = [0.1, 0.65, 1.1, 1.45, 1.72, 1.92, 2.08, 2.2];
+          const rates = ["1×", "1×", "2×", "3×", "4×", "6×", "8×", "8×"];
+          times.forEach((t, k) => { tl.set(ims, { opacity: 0 }, t0 + t); tl.set(ims[k % 6], { opacity: 1 }, t0 + t); tl.set(sp, { textContent: rates[k] }, t0 + t); });
+          ft(fl, { opacity: 0 }, { opacity: 0.9, duration: 0.05 }, t0 + 2.3); ft(fl, { opacity: 0.9 }, { opacity: 0, duration: 0.25 }, t0 + 2.35);
+          tl.set(ims, { opacity: 0 }, t0 + 2.3); tl.set(ims[3], { opacity: 1, filter: "grayscale(1) contrast(1.2)" }, t0 + 2.3);
+          tl.set(sp, { textContent: "0×" }, t0 + 2.3);
+          ft(stamp, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.2, ease: "power3.out" }, t0 + 2.4);
+          tl.set(stamp, { opacity: 0 }, t0 + 3.4);
+          tl.set(ims, { opacity: 0, filter: "none" }, t0 + 3.5); tl.set(ims[0], { opacity: 1 }, t0 + 3.5); tl.set(sp, { textContent: "1×" }, t0 + 3.5);
+        };
+      });
+
+      /* 05 — Camcorder HUD */
+      cell("05", "CAMCORDER HUD", "camcorder-hud", (st) => {
+        const i = img(4, st); i.style.filter = "contrast(1.1) saturate(.75) sepia(.25)";
+        const mkc = (css, html, cls) => { const e = mk("div", "a mono chip " + (cls || ""), html); e.style.cssText += ";" + css; st.appendChild(e); return e; };
+        const rec = mkc("left:12px;top:12px;font-size:14px;color:#fff", '<span class="rd" style="color:#ff3b30">●</span> REC');
+        const bat = mkc("right:12px;top:12px;font-size:13px", "▮▮▮▯ 74%");
+        const dt = mkc("left:12px;bottom:12px;font-size:12px", "03 OUT 2026 · 18:42");
+        const tc = mkc("right:12px;bottom:12px;font-size:14px", "00:00:00");
+        const br = svgEl(445, 260); st.appendChild(br);
+        [[28, 54, 1, 1], [417, 54, -1, 1], [28, 206, 1, -1], [417, 206, -1, -1]].forEach(([x, y, sx, sy]) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", `M${x},${y + 16 * sy} L${x},${y} L${x + 16 * sx},${y}`); p.setAttribute("fill", "none"); p.setAttribute("stroke", "rgba(255,255,255,.8)"); p.setAttribute("stroke-width", 2); br.appendChild(p); });
+        const rd = rec.querySelector(".rd");
+        return (t0) => {
+          for (let k = 0; k < 8; k++) tl.set(rd, { opacity: k % 2 ? 0 : 1 }, t0 + k * 0.5);
+          prox(t0, 4, (v) => { tc.textContent = tcode(v * 4); });
+          prox(t0, 4, (v) => { const x = Math.sin(v * 4 * 19) * 1.2, y = Math.sin(v * 4 * 23 + 1) * 1.2; i.style.transform = `translate(${x}px,${y}px) scale(1.04)`; });
+        };
+      });
+
+      /* 06 — Grain (filme 35 mm) */
+      cell("06", "FILM GRAIN", "grain-overlay", (st) => {
+        const i = img(5, st); i.style.filter = "contrast(1.08) saturate(.9) sepia(.18)";
+        const noise = "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 -.1'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
+        const g = allow(mk("div", "a")); g.style.cssText = `inset:-20px;background-image:${noise};background-size:220px 220px;opacity:.42;mix-blend-mode:overlay`;
+        const vg = allow(mk("div", "a")); vg.style.cssText = "inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65))";
+        const wm = allow(mk("div", "a")); wm.style.cssText = "inset:0;background:rgba(255,150,40,.14);mix-blend-mode:multiply";
+        st.append(wm, g, vg, mk("div", "tag", "35 MM"));
+        return (t0) => {
+          for (let k = 0; k < 48; k++) { const px = (k * 71) % 220, py = (k * 137) % 220; tl.set(g, { backgroundPosition: `${px}px ${py}px` }, t0 + k / 12); }
+          prox(t0, 4, (v) => { vg.style.opacity = String(0.85 + 0.15 * Math.sin(v * 4 * 9)); });
+        };
+      });
+
+      /* 07 — Screen warp (CRT) */
+      cell("07", "SCREEN WARP", "yt-screen-warp", (st) => {
+        const i = img(1, st); i.style.filter = "saturate(1.15) contrast(1.05)";
+        const sl = allow(mk("div", "a")); sl.style.cssText = "inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px)";
+        const gr = allow(mk("div", "a")); gr.style.cssText = "inset:0;background:linear-gradient(rgba(120,200,255,.18) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,rgba(120,200,255,.18) 1px,transparent 1px) 0 0/22px 22px";
+        const vg = allow(mk("div", "a")); vg.style.cssText = "inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.75));box-shadow:inset 0 0 40px 10px rgba(0,0,0,.6)";
+        const band = allow(mk("div", "a")); band.style.cssText = "left:0;right:0;top:-70px;height:70px;background:linear-gradient(transparent,rgba(255,255,255,.14),transparent)";
+        const sheen = allow(mk("div", "a")); sheen.style.cssText = "left:-200px;top:0;width:120px;height:260px;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-14deg)";
+        st.append(gr, sl, band, sheen, vg, mk("div", "tag", "CRT"));
+        return (t0) => {
+          ft(band, { y: 0 }, { y: 340, duration: 1.6, ease: "none" }, t0); ft(band, { y: 0 }, { y: 340, duration: 1.6, ease: "none" }, t0 + 2);
+          ft(sheen, { x: 0 }, { x: 760, duration: 1.2, ease: "power2.inOut" }, t0 + 0.8);
+          prox(t0, 4, (v) => { i.style.transform = `translateX(${Math.sin(v * 4 * 17) * 1.5}px) scale(1.03)`; });
+        };
+      });
+
+      /* 08 — Telemetry HUD */
+      cell("08", "TELEMETRY HUD", "telemetry-hud", (st) => {
+        const i = img(3, st); i.style.filter = "brightness(.8)";
+        const br = svgEl(445, 260); st.appendChild(br);
+        const mkb = (x, y, sx, sy) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", `M${x},${y + 26 * sy} L${x},${y} L${x + 26 * sx},${y}`); p.setAttribute("fill", "none"); p.setAttribute("stroke", "#67e8f9"); p.setAttribute("stroke-width", 2.5); p.setAttribute("pathLength", "1"); p.style.strokeDasharray = "1 1"; p.style.strokeDashoffset = "1"; br.appendChild(p); return p; };
+        const bs = [mkb(14, 14, 1, 1), mkb(431, 14, -1, 1), mkb(14, 246, 1, -1), mkb(431, 246, -1, -1)];
+        const mkc = (css, txt) => { const e = mk("div", "a mono chip", txt); e.style.cssText += ";" + css + ";color:#a5f3fc;font-size:11px"; st.appendChild(e); return e; };
+        const a = mkc("left:26px;top:24px", "ISO 100"), b = mkc("right:26px;top:24px", "f/1.8 · 1/60"), c = mkc("left:26px;bottom:24px", "REC 00:00:00"), d = mkc("right:26px;bottom:24px", "4K · 30 FPS");
+        const ch = svgEl(445, 260); ch.innerHTML = '<circle cx="222" cy="120" r="14" fill="none" stroke="#67e8f9" stroke-width="1.5"/><path d="M222,98 v14 M222,128 v14 M200,120 h14 M230,120 h14" stroke="#67e8f9" stroke-width="1.5"/>'; st.appendChild(ch);
+        return (t0) => {
+          bs.forEach((p, k) => ft(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, t0 + 0.1 + k * 0.08));
+          ft([a, b, c, d], { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.1 }, t0 + 0.5);
+          prox(t0 + 0.5, 1.6, (v) => { a.textContent = "ISO " + (100 + Math.round(v * 300)); }, "power2.out");
+          prox(t0, 4, (v) => { c.textContent = "REC " + tcode(v * 4); });
+          ft(ch, { scale: 1.6, opacity: 0, transformOrigin: "222px 120px" }, { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, t0 + 0.3);
+          ft([bs, a, b, c, d, ch].flat(), { opacity: 1 }, { opacity: 0, duration: 0.25 }, t0 + 3.7);
+          tl.set([bs, a, b, c, d, ch].flat(), { opacity: 1 }, t0 + 3.99); tl.set(bs, { strokeDashoffset: 1 }, t0 + 3.99);
+        };
+      });
+
+      /* 09 — Tracking box */
+      cell("09", "TRACKING BOX", "ai-tracking-box", (st) => {
+        const i = img(0, st); i.style.transformOrigin = "50% 50%";
+        const box = allow(mk("div", "a")); box.style.cssText = "left:0;top:0;width:120px;height:140px;border:2px solid #4ade80;border-radius:6px;box-shadow:0 0 0 1px rgba(0,0,0,.4)";
+        const lab = mk("div", "a mono", "ROSTO · 98%"); lab.style.cssText = "left:-2px;top:-24px;background:#166534;color:#fff;font-size:10px;padding:3px 7px;border-radius:3px;white-space:nowrap;letter-spacing:.06em";
+        box.appendChild(lab); st.appendChild(box);
+        const cx = 188, cy = 112;
+        const place = (w, h, ox, oy) => { box.style.width = w + "px"; box.style.height = h + "px"; box.style.transform = `translate(${cx - w / 2 + ox}px,${cy - h / 2 + oy}px)`; };
+        place(300, 220, 0, 0);
+        return (t0) => {
+          prox(t0 + 0.2, 0.7, (v) => { place(300 - 180 * v, 220 - 70 * v, 0, 0); box.style.opacity = String(Math.min(1, v * 4)); }, "power3.out");
+          prox(t0 + 0.9, 2.8, (v) => {
+            const ox = Math.sin(v * Math.PI * 2) * 14, oy = Math.sin(v * Math.PI * 4) * 5;
+            i.style.transform = `translate(${ox}px,${oy}px) scale(1.06)`; place(120, 150, ox, oy);
+          });
+          ft(box, { opacity: 1 }, { opacity: 0, duration: 0.25 }, t0 + 3.75);
+          tl.set(box, { opacity: 0 }, t0 + 3.99); tl.set(i, { scale: 1, x: 0, y: 0 }, t0 + 3.99);
+        };
+      });
+
+      /* 10 — Cursor gigante */
+      cell("10", "CURSOR GIGANTE", "oversized-cursor · press-ripple", (st) => {
+        const i = img(2, st); i.style.filter = "brightness(.55)";
+        const spot = allow(mk("div", "a")); spot.style.cssText = "left:262px;top:110px;width:130px;height:46px;border-radius:23px;background:#fff;color:#111;display:grid;place-items:center;font-weight:900;font-size:13px;letter-spacing:.06em";
+        spot.textContent = "SEGUIR";
+        const ring = allow(mk("div", "a")); ring.style.cssText = "left:262px;top:110px;width:130px;height:46px;border-radius:23px;border:3px solid #fbbf24;opacity:0";
+        const cur = allow(mk("div", "a")); cur.style.cssText = "left:0;top:0;width:60px;height:70px;transform-origin:0 0";
+        cur.innerHTML = '<svg width="60" height="70" viewBox="0 0 22 26" style="overflow:visible"><path d="M2 2 L2 21 L7.5 16.5 L11 24 L14.5 22.5 L11 15 L18 15 Z" fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+        st.append(spot, ring, cur);
+        return (t0) => {
+          ft(cur, { x: 60, y: 200, opacity: 0 }, { x: 352, y: 140, opacity: 1, duration: 1.1, ease: "power3.out" }, t0 + 0.3);
+          ft(cur, { scale: 1 }, { scale: 0.86, duration: 0.1, yoyo: true, repeat: 1 }, t0 + 1.55);
+          ft(ring, { scale: 1, opacity: 0.95 }, { scale: 1.8, opacity: 0, duration: 0.7, ease: "power2.out" }, t0 + 1.55);
+          ft(spot, { scale: 1 }, { scale: 1.12, duration: 0.15, yoyo: true, repeat: 1 }, t0 + 1.6);
+          ft(cur, { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.4);
+          tl.set(cur, { opacity: 0 }, t0 + 3.99);
+        };
+      });
+
+      /* 11 — Anotação à mão */
+      cell("11", "ANOTAÇÃO À MÃO", "vox-annotate · hw-underline", (st) => {
+        const i = img(3, st);
+        const sv = svgEl(445, 260); st.appendChild(sv);
+        const mkp = (d, w) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("pathLength", "1"); p.setAttribute("fill", "none"); p.setAttribute("stroke", "#fde047"); p.setAttribute("stroke-width", w); p.setAttribute("stroke-linecap", "round"); p.setAttribute("stroke-linejoin", "round"); p.style.strokeDasharray = "1 1"; p.style.strokeDashoffset = "1"; sv.appendChild(p); return p; };
+        const circ = mkp("M168,86 C160,60 262,52 290,84 C312,112 290,148 230,150 C178,152 150,112 172,82 C186,66 250,56 280,76", 4);
+        const arw = mkp("M330,200 C360,196 372,170 350,140 M346,152 L350,138 L362,148", 4);
+        const lab = mk("div", "a", "olha o olhar!"); lab.style.cssText = "left:238px;top:196px;font-family:HandBradley,cursive;font-weight:700;font-size:28px;color:#fde047;background:rgba(0,0,0,.55);padding:2px 10px;border-radius:6px;transform:rotate(-4deg);opacity:0";
+        st.appendChild(lab);
+        return (t0) => {
+          ft(circ, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.9, ease: "power1.inOut" }, t0 + 0.4);
+          ft(arw, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, t0 + 1.4);
+          ft(lab, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, t0 + 1.6);
+          ft([sv, lab], { opacity: 1 }, { opacity: 0, duration: 0.3 }, t0 + 3.6);
+          tl.set([circ, arw], { strokeDashoffset: 1 }, t0 + 3.99); tl.set([sv, lab], { opacity: 1 }, t0 + 3.99); tl.set(lab, { opacity: 0 }, t0 + 3.99);
+        };
+      });
+
+      /* 12 — Split screen (padrão aprovado: animação em cima, Julio embaixo) */
+      cell("12", "SPLIT SCREEN", "padrão aprovado · 9:16", (st) => {
+        st.style.background = "#0a0a0a";
+        const ph = allow(mk("div", "a")); ph.style.cssText = "left:150px;top:0;width:146px;height:260px;overflow:hidden;background:#0a0a0a;box-shadow:0 0 0 1px #282828";
+        const top = allow(mk("div", "a")); top.style.cssText = "left:0;top:0;width:146px;height:96px;background:#141414;overflow:hidden";
+        const dots = [];
+        for (let k = 0; k < 40; k++) { const d = mk("div", "a"); d.style.cssText = `left:${10 + (k % 10) * 13}px;top:${14 + Math.floor(k / 10) * 20}px;width:8px;height:8px;border-radius:50%;background:${k % 7 === 3 ? "#f97316" : "#fff"};opacity:0`; top.appendChild(d); dots.push(d); }
+        const jul = allow(mk("div", "a")); jul.style.cssText = "left:0;top:96px;width:146px;height:164px;overflow:hidden";
+        const ji = mk("img", "fr"); ji.src = `../_fontes/moodboard-camera/assets/${FR[1]}.jpg`; ji.alt = ""; ji.style.cssText = "width:146px;height:200px;top:0;object-position:50% 18%"; jul.appendChild(ji);
+        const cap = mk("div", "a", 'IA <b style="color:#f97316">sem medo</b>'); cap.style.cssText = "left:0;right:0;top:84px;text-align:center;font-weight:800;font-size:13px;background:rgba(10,10,10,.8);padding:3px 0;color:#fff;opacity:0";
+        ph.append(top, jul, cap); st.appendChild(ph);
+        const side = mk("div", "a mono", "painel ↑ animação<br>↓ Julio<br>legenda na emenda"); side.style.cssText = "left:312px;top:104px;font-size:10px;line-height:1.6;color:#a8a8a8";
+        st.appendChild(side);
+        return (t0) => {
+          ft(dots, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)", stagger: 0.025 }, t0 + 0.2);
+          ft(dots, { y: 0 }, { y: -3, duration: 0.4, yoyo: true, repeat: 3, ease: "sine.inOut", stagger: 0.01 }, t0 + 1.4);
+          ft(cap, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.3 }, t0 + 0.9);
+          ft([dots, cap].flat(), { opacity: 1 }, { opacity: 0, duration: 0.25 }, t0 + 3.7);
+          tl.set(dots, { opacity: 0 }, t0 + 3.99);
+        };
+      });
+
+      cells.splice(0, cells.length, ...cells.filter((c) => c.n === "06"));
+
+      const fns = cells.map((c, i) => {
+        const el = mk("div", "cell"); el.id = "c" + c.n;
+        el.style.left = "0px"; el.style.top = "0px";
+        const st = mk("div", "st"); el.appendChild(st);
+        el.appendChild(mk("div", "lb", `<b><i>${c.n}</i>${c.name}</b><span>${c.tech}</span>`));
+        root.appendChild(el);
+        const f = c.build(st);
+        st.querySelectorAll("*").forEach((n) => { if (n.tagName.toLowerCase() !== "svg") allow(n); });
+        return f;
+      });
+      for (let k = 0; k < LOOPS; k++) fns.forEach((f) => f(k * L));
+      (window.__timelines ||= {})["main"] = tl;
+      if (window.self === window.top && !navigator.webdriver) tl.repeat(-1).play();
+    </script>
+  </body>
+</html>

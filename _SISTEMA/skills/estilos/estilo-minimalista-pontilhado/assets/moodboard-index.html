@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="lib/dots.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0a0a0a; }
+      #root { position: relative; width: 1080px; height: 1920px; font-family: Montserrat, sans-serif; }
+      .frame { position: absolute; inset: 0; background: #0a0a0a; }
+      .frame svg { position: absolute; inset: 0; }
+      .cap {
+        position: absolute; left: 90px; right: 90px; top: 1500px;
+        text-align: center; color: #fff; font-weight: 600; font-size: 52px; line-height: 1.25;
+        letter-spacing: -0.01em;
+      }
+      .cap b { color: #f97316; font-weight: 800; }
+      .tag {
+        position: absolute; left: 70px; top: 90px; color: #a8a8a8; font-size: 26px;
+        font-weight: 600; letter-spacing: 0.25em;
+      }
+      .lbl { font-family: Montserrat, sans-serif; font-weight: 700; letter-spacing: 0.18em; }
+      /* folha de estilo */
+      .sw { position: absolute; width: 200px; height: 200px; border-radius: 50%; }
+      .swl { position: absolute; color: #a8a8a8; font-size: 26px; font-weight: 600; letter-spacing: .1em; width: 260px; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+      <div id="f1" class="frame clip" data-start="0" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">01 — HOOK</div>
+        <div class="cap">Se você não tem interesse por IA, vai ficar <b>desempregado</b> em alguns anos.</div>
+      </div>
+      <div id="f2" class="frame clip" data-start="1" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">02 — A VAGA</div>
+        <div class="cap">Vai perder a sua vaga para alguém com um <b>mínimo de interesse</b>.</div>
+      </div>
+      <div id="f3" class="frame clip" data-start="2" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">03 — A BALANÇA</div>
+        <div class="cap">Usar IA <b>não é uma briga justa</b> com quem não usa.</div>
+      </div>
+      <div id="f4" class="frame clip" data-start="3" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">04 — A DISTÂNCIA</div>
+        <div class="cap">Vai <b>muito além</b> de uma pessoa sem elas.</div>
+      </div>
+      <div id="f5" class="frame clip" data-start="4" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">05 — A VIRADA</div>
+        <div class="cap">Se atualize, se capacite <b>enquanto é tempo</b>.</div>
+      </div>
+      <div id="f6" class="frame clip" data-start="5" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">06 — ASSINATURA</div>
+      </div>
+      <div id="f7" class="frame clip" data-start="6" data-duration="1" data-track-index="0">
+        <svg width="1080" height="1920"></svg>
+        <div class="tag">ESTILO — PRETO · BRANCO · LARANJA · PONTILHADO</div>
+        <div class="sw" style="left:120px;top:260px;background:#0a0a0a;border:2px dashed #3a3a3a"></div>
+        <div class="sw" style="left:440px;top:260px;background:#fff"></div>
+        <div class="sw" style="left:760px;top:260px;background:#f97316"></div>
+        <div class="swl" style="left:90px;top:490px">#0A0A0A<br>FUNDO</div>
+        <div class="swl" style="left:410px;top:490px">#FFFFFF<br>NEUTRO</div>
+        <div class="swl" style="left:730px;top:490px">#F97316<br>A IDEIA</div>
+        <div style="position:absolute;left:90px;top:640px;color:#fff;font-weight:800;font-size:96px;letter-spacing:-.02em">Montserrat</div>
+        <div style="position:absolute;left:90px;top:760px;color:#a8a8a8;font-weight:600;font-size:40px">Legenda frase a frase, <span style="color:#f97316;font-weight:800">palavra-chave</span> em laranja.</div>
+      </div>
+    </div>
+    <script>
+      const { fill, stroke, text, draw, grid, rand, SHAPES, WHITE, ORANGE } = DOTS;
+      const svgOf = (id) => document.querySelector(`#${id} svg`);
+
+      // ---------- 01 HOOK: bonecos se desfazendo ----------
+      (function () {
+        const svg = svgOf("f1");
+        grid(svg);
+        draw(svg, text("DESEMPREGADO", { size: 120, step: 7, cx: 540, cy: 380 }), { r: 2.6, color: WHITE });
+        const r = rand(7);
+        const s = 0.82, gap = 196, x0 = 540 - 2 * gap - 82, y0 = 640;
+        for (let i = 0; i < 5; i++) {
+          const ox = x0 + i * gap;
+          const body = fill(SHAPES.person, { step: 13, ox, oy: y0, s });
+          if (i < 2) draw(svg, body, { r: 3.6 });
+          else if (i === 2) {
+            // metade se soltando: pontos caem e apagam
+            body.forEach((p) => {
+              if (r() < 0.45) draw(svg, [p], { r: 3.6 });
+              else draw(svg, [{ x: p.x + (r() - 0.5) * 40, y: p.y + 80 + r() * 380 }], { r: 3, opacity: 0.25 + r() * 0.35 });
+            });
+          } else {
+            draw(svg, stroke(SHAPES.person, { gap: 15, ox, oy: y0, s }), { r: 2.4, opacity: i === 3 ? 0.5 : 0.28 });
+          }
+        }
+        // chão pontilhado
+        draw(svg, stroke("M80,1010 L1000,1010", { gap: 16 }), { r: 2, opacity: 0.35 });
+      })();
+
+      // ---------- 02 A VAGA ----------
+      (function () {
+        const svg = svgOf("f2");
+        grid(svg);
+        const floor = 1180;
+        draw(svg, fill(SHAPES.chair, { step: 12, ox: 640, oy: floor - 300 * 1.1, s: 1.1 }), { r: 3.4 });
+        // quem perde: contorno esmaecido, à esquerda
+        draw(svg, stroke(SHAPES.person, { gap: 15, ox: 110, oy: floor - 400 * 0.95, s: 0.95 }), { r: 2.4, opacity: 0.35 });
+        // quem tem interesse: entrando na vaga, com 1 ponto laranja no peito
+        const ox = 400, oy = floor - 400 * 0.95;
+        draw(svg, fill(SHAPES.person, { step: 13, ox, oy, s: 0.95 }), { r: 3.6 });
+        draw(svg, [{ x: ox + 100 * 0.95, y: oy + 175 * 0.95 }], { r: 13, color: ORANGE });
+        // rastro do movimento
+        draw(svg, stroke("M330,960 L390,960", { gap: 15 }), { r: 2.4, opacity: 0.4 });
+        draw(svg, stroke("M300,1010 L380,1010", { gap: 15 }), { r: 2.4, opacity: 0.25 });
+        draw(svg, stroke("M80,1180 L1000,1180", { gap: 16 }), { r: 2, opacity: 0.35 });
+      })();
+
+      // ---------- 03 A BALANÇA ----------
+      (function () {
+        const svg = svgOf("f3");
+        grid(svg);
+        const ox = 340, oy = 640;
+        draw(svg, fill(SHAPES.scaleBase, { step: 12, ox, oy }), { r: 3.4 });
+        // viga inclinada (esquerda pra baixo)
+        const a = (-14 * Math.PI) / 180, cx = ox + 200, cy = oy + 40, L = 340;
+        const lx = cx - L * Math.cos(a), ly = cy - L * Math.sin(a);
+        const rx = cx + L * Math.cos(a), ry = cy + L * Math.sin(a);
+        draw(svg, stroke(`M${lx},${ly} L${rx},${ry}`, { gap: 13 }), { r: 4 });
+        draw(svg, [{ x: cx, y: cy }], { r: 12, color: WHITE });
+        const hang = 200;
+        // cordas
+        [[lx, ly], [rx, ry]].forEach(([x, y]) => {
+          draw(svg, stroke(`M${x},${y} L${x - 70},${y + hang} M${x},${y} L${x + 70},${y + hang}`, { gap: 15 }), { r: 2.2, opacity: 0.6 });
+        });
+        // pratos
+        draw(svg, fill(SHAPES.pan, { step: 11, ox: lx, oy: ly + hang }), { r: 3.2, color: ORANGE });
+        draw(svg, fill(SHAPES.pan, { step: 11, ox: rx, oy: ry + hang }), { r: 3.2 });
+        // carga do prato laranja: pilha de pontos
+        const r = rand(3);
+        for (let i = 0; i < 70; i++) {
+          const t = r(), u = r();
+          draw(svg, [{ x: lx + (t - 0.5) * 130, y: ly + hang - 6 - u * 70 * (1 - Math.abs(t - 0.5) * 1.6) }], { r: 3.4, color: ORANGE });
+        }
+        const lt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        Object.assign(lt, {});
+        svg.insertAdjacentHTML("beforeend",
+          `<text x="${lx}" y="${ly + hang + 130}" text-anchor="middle" class="lbl" fill="#F97316" font-size="34">COM IA</text>
+           <text x="${rx}" y="${ry + hang + 130}" text-anchor="middle" class="lbl" fill="#FFFFFF" opacity=".6" font-size="34">SEM</text>`);
+      })();
+
+      // ---------- 04 A DISTÂNCIA (gráfico) ----------
+      (function () {
+        const svg = svgOf("f4");
+        grid(svg);
+        const X0 = 130, Y0 = 1280, W = 840, H = 1050;
+        draw(svg, stroke(`M${X0},${Y0 - H} L${X0},${Y0} L${X0 + W},${Y0}`, { gap: 18 }), { r: 2.2, opacity: 0.45 });
+        // linha branca: lenta
+        const wp = [];
+        for (let i = 0; i <= 44; i++) { const t = i / 44; wp.push({ x: X0 + t * W, y: Y0 - 40 - t * 170 }); }
+        draw(svg, wp, { r: 4 });
+        // linha laranja: exponencial, sai pelo topo
+        const op = [];
+        for (let i = 0; i <= 60; i++) {
+          const t = i / 60;
+          const y = Y0 - 40 - (Math.exp(t * 4.4) - 1) / (Math.exp(4.4) - 1) * (H + 260);
+          if (y > 0) op.push({ x: X0 + t * W, y });
+        }
+        draw(svg, op, { r: 5, color: ORANGE });
+        const labels = [["TÉCNICA", 0.62], ["RESULTADO", 0.78], ["PERFORMANCE", 0.9]];
+        labels.forEach(([l, t]) => {
+          const x = X0 + t * W, y = Y0 - 40 - (Math.exp(t * 4.4) - 1) / (Math.exp(4.4) - 1) * (H + 260);
+          svg.insertAdjacentHTML("beforeend",
+            `<circle cx="${x}" cy="${y}" r="12" fill="none" stroke="#F97316" stroke-width="3"/>
+             <text x="${x - 30}" y="${y + 10}" text-anchor="end" class="lbl" fill="#FFFFFF" font-size="30">${l}</text>`);
+        });
+        svg.insertAdjacentHTML("beforeend",
+          `<text x="${X0 + W}" y="${Y0 - 250}" text-anchor="end" class="lbl" fill="#A8A8A8" font-size="28">SEM IA</text>`);
+      })();
+
+      // ---------- 05 A VIRADA ----------
+      (function () {
+        const svg = svgOf("f5");
+        grid(svg);
+        const ox = 170, oy = 640, s = 1.4;
+        const pts = fill(SHAPES.person, { step: 13, ox, oy, s });
+        const c = { x: ox + 100 * s, y: oy + 180 * s };
+        pts.forEach((p) => {
+          const d = Math.hypot(p.x - c.x, p.y - c.y);
+          draw(svg, [p], { r: 3.8, color: d < 200 ? ORANGE : WHITE });
+        });
+        // seta pontilhada subindo
+        draw(svg, fill(SHAPES.arrow, { step: 13, ox: 660, oy: 560, s: 1.2 }), { r: 3.6, color: ORANGE });
+        draw(svg, stroke("M780,1080 L780,1240", { gap: 20 }), { r: 3, color: ORANGE, opacity: 0.45 });
+        draw(svg, stroke("M80,1210 L1000,1210", { gap: 16 }), { r: 2, opacity: 0.35 });
+      })();
+
+      // ---------- 06 ASSINATURA ----------
+      (function () {
+        const svg = svgOf("f6");
+        grid(svg, { opacity: 0.04 });
+        draw(svg, text("{{HANDLE}}", { size: 150, step: 8, cx: 540, cy: 900 }), { r: 3, color: WHITE });
+        draw(svg, [{ x: 540, y: 1060 }], { r: 10, color: ORANGE });
+      })();
+
+      // ---------- folha de estilo: amostras de pontilhado ----------
+      (function () {
+        const svg = svgOf("f7");
+        grid(svg);
+        draw(svg, stroke("M90,960 C300,880 500,1060 990,940", { gap: 16 }), { r: 3 });
+        svg.insertAdjacentHTML("beforeend", `<text x="90" y="1040" class="lbl" fill="#A8A8A8" font-size="24">LINHA PONTILHADA</text>`);
+        draw(svg, fill(SHAPES.person, { step: 13, ox: 120, oy: 1120, s: 0.8 }), { r: 3.4 });
+        draw(svg, stroke(SHAPES.person, { gap: 15, ox: 340, oy: 1120, s: 0.8 }), { r: 2.4, opacity: 0.5 });
+        const pts = fill(SHAPES.person, { step: 13, ox: 560, oy: 1120, s: 0.8 });
+        const r = rand(11);
+        draw(svg, pts.map((p) => ({ x: p.x + (r() - 0.5) * 160, y: p.y + (r() - 0.5) * 160 })), { r: 3, opacity: 0.5 });
+        draw(svg, fill(SHAPES.person, { step: 13, ox: 780, oy: 1120, s: 0.8 }), { r: 3.4, color: ORANGE });
+        [["MATRIZ", 200], ["CONTORNO", 420], ["PARTÍCULAS", 640], ["DESTAQUE", 860]].forEach(([l, x]) =>
+          svg.insertAdjacentHTML("beforeend", `<text x="${x}" y="1490" text-anchor="middle" class="lbl" fill="#A8A8A8" font-size="24">${l}</text>`));
+      })();
+
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

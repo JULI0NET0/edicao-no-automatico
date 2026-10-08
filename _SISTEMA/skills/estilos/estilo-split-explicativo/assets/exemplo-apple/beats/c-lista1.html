@@ -1,0 +1,296 @@
+<!doctype html>
+<!--
+  Beat C — split screen. The footage is lifted by the host camera; this layer
+  owns the lower panel (y 1040–1920).
+  Entry: whip-pan-cut (panel whips in laterally with capped directional blur).
+  Body: pan-stations (one strip, one virtual camera; sine.inOut pans, steady
+        dwell) — but each pan lands on the spoken product, not a fixed dwell.
+  Exit: chromatic-aberration-wipe (clip edge + white sheen + red/cyan split
+        jittered on steps(1)).
+  Mounted at global 5.0 — cue constants below are GLOBAL seconds.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          font-family: "Montserrat", sans-serif;
+        }
+        #c-panel {
+          position: absolute;
+          left: 0;
+          top: 1040px;
+          width: 1080px;
+          height: 880px;
+          overflow: hidden;
+          background:
+            radial-gradient(ellipse 70% 60% at 50% 40%, #1C1C1C 0%, #111111 62%, #0A0A0A 100%);
+          clip-path: inset(0% 0% 0% 0%);
+        }
+        #c-edge {
+          position: absolute;
+          left: 0;
+          top: 1034px;
+          width: 1080px;
+          height: 6px;
+          background: linear-gradient(90deg, rgba(249, 115, 22, 0), #F97316 20%, #FDBA74 50%, #F97316 80%, rgba(249, 115, 22, 0));
+          box-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
+          transform-origin: 50% 50%;
+        }
+        #c-strip {
+          position: absolute;
+          top: 150px;
+          left: 0;
+          display: flex;
+          gap: 60px;
+          padding-left: 240px;
+          will-change: transform;
+        }
+        .c-card {
+          position: relative;
+          flex: 0 0 600px;
+          height: 620px;
+          border-radius: 40px;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+          border: 2px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          overflow: hidden;
+          transform-origin: 50% 50%;
+        }
+        .c-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 50% 42%, rgba(249, 115, 22, 0.168), rgba(249, 115, 22, 0.0) 55%);
+        }
+        .c-kicker {
+          position: absolute;
+          top: 38px;
+          left: 0;
+          width: 100%;
+          text-align: center;
+          font-weight: 800;
+          font-size: 24px;
+          letter-spacing: 0.34em;
+          color: #A8A8A8;
+        }
+        .c-img {
+          position: absolute;
+          left: 50%;
+          top: 84px;
+          width: 400px;
+          height: 400px;
+          margin-left: -200px;
+          object-fit: contain;
+          filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6));
+        }
+        .c-label {
+          position: absolute;
+          bottom: 30px;
+          left: 0;
+          width: 100%;
+          text-align: center;
+          font-family: "League Gothic", sans-serif;
+          font-size: 96px;
+          line-height: 1;
+          color: #fff;
+          letter-spacing: 0.02em;
+        }
+        .c-card.is-mystery .c-img {
+          filter: brightness(0) drop-shadow(0 0 2px rgba(249, 115, 22, 0.9)) drop-shadow(0 0 24px rgba(249, 115, 22, 0.6));
+        }
+        .c-card.is-mystery .c-kicker {
+          color: #F97316;
+        }
+        .c-q {
+          position: absolute;
+          left: 0;
+          top: 150px;
+          width: 100%;
+          text-align: center;
+          font-family: "League Gothic", sans-serif;
+          font-size: 240px;
+          line-height: 1;
+          color: #F97316;
+          text-shadow: 0 0 40px rgba(249, 115, 22, 0.55);
+        }
+        #c-rail {
+          position: absolute;
+          left: 290px;
+          top: 820px;
+          width: 500px;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.14);
+          border-radius: 2px;
+        }
+        #c-rail-fill {
+          position: absolute;
+          inset: 0;
+          background: #F97316;
+          transform: scaleX(0);
+          transform-origin: 0% 50%;
+          border-radius: 2px;
+        }
+        .c-dot {
+          position: absolute;
+          top: -8px;
+          width: 20px;
+          height: 20px;
+          margin-left: -10px;
+          border-radius: 50%;
+          background: #282828;
+          border: 3px solid #0A0A0A;
+        }
+        #c-rgb {
+          position: absolute;
+          left: 0;
+          top: 1040px;
+          width: 1080px;
+          height: 880px;
+          opacity: 0;
+          background: linear-gradient(90deg, rgba(239, 68, 68, 0.45), rgba(0, 0, 0, 0), rgba(34, 211, 238, 0.45));
+          mix-blend-mode: screen;
+        }
+        #c-sheen {
+          position: absolute;
+          left: 0;
+          top: 1040px;
+          width: 1080px;
+          height: 880px;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+          mix-blend-mode: screen;
+          transform: translateY(-110%);
+          opacity: 0;
+        }
+      </style>
+      <div id="root" data-composition-id="c-lista1" data-width="1080" data-height="1920">
+        <div id="c-panel">
+          <div id="c-strip"></div>
+          <div id="c-rail"><div id="c-rail-fill"></div></div>
+        </div>
+        <div id="c-edge"></div>
+        <div id="c-rgb"></div>
+        <div id="c-sheen"></div>
+      </div>
+      <script>
+        (function () {
+          var OFFSET = 5.0;
+          var T = function (g) {
+            return g - OFFSET;
+          };
+          var STATIONS = [
+            { img: "assets/img/phone.png", label: "IPHONE", kicker: "ENTROU DEPOIS", at: 6.41 },
+            { img: "assets/img/watch.png", label: "APPLE WATCH", kicker: "ENTROU DEPOIS", at: 7.06 },
+            { img: "assets/img/tablet.png", label: "IPAD", kicker: "ENTROU DEPOIS", at: 8.69 },
+            { img: "assets/img/laptop.png", label: "COMPUTADOR", kicker: "ENTROU DEPOIS", at: 9.17 },
+            { img: "assets/img/fold-silver.png", label: "DOBRÁVEL", kicker: "AGORA", at: 10.87, mystery: true },
+          ];
+          var STEP = 660; // card 600 + gap 60
+          var ENTER = 5.08;
+          var EXIT = 12.28;
+
+          var strip = document.getElementById("c-strip");
+          var rail = document.getElementById("c-rail");
+          var cards = STATIONS.map(function (s, i) {
+            var c = document.createElement("div");
+            c.className = "c-card" + (s.mystery ? " is-mystery" : "");
+            c.innerHTML =
+              '<div class="c-kicker"></div><img class="c-img" /><div class="c-label"></div>' +
+              (s.mystery ? '<div class="c-q">?</div>' : "");
+            c.querySelector(".c-kicker").textContent = String(i + 1).padStart(2, "0") + " · " + s.kicker;
+            c.querySelector(".c-img").src = s.img;
+            c.querySelector(".c-label").textContent = s.label;
+            strip.appendChild(c);
+            var dot = document.createElement("div");
+            dot.className = "c-dot";
+            dot.style.left = (i / (STATIONS.length - 1)) * 100 + "%";
+            rail.appendChild(dot);
+            return c;
+          });
+          var dots = Array.prototype.slice.call(rail.querySelectorAll(".c-dot"));
+          var imgs = cards.map(function (c) {
+            return c.querySelector(".c-img");
+          });
+
+          var tl = gsap.timeline({ paused: true });
+          gsap.set(cards, { scale: 0.84, opacity: 0.4 });
+          gsap.set(cards[0], { scale: 1, opacity: 1 });
+
+          // --- whip-pan-cut entry: panel whips in from the right with capped blur.
+          tl.fromTo(
+            "#c-panel",
+            { x: 1080, filter: "blur(22px)" },
+            { x: 0, filter: "blur(0px)", duration: 0.36, ease: "power4.inOut" },
+            T(ENTER),
+          );
+          tl.fromTo("#c-edge", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.4, ease: "power3.out" }, T(ENTER + 0.18));
+
+          // --- pan-stations: one pan per spoken product, landing just before the word.
+          STATIONS.forEach(function (s, i) {
+            if (i === 0) {
+              tl.to(dots[0], { backgroundColor: "#F97316", scale: 1.3, duration: 0.2 }, T(s.at - 0.1));
+              return;
+            }
+            var dur = i === 3 ? 0.2 : 0.3; // iPad → computador lands 0.5s apart
+            var at = s.at - dur - 0.02;
+            tl.to(strip, { x: -STEP * i, duration: dur, ease: "sine.inOut" }, T(at));
+            tl.to(cards[i - 1], { scale: 0.84, opacity: 0.4, duration: dur, ease: "sine.inOut" }, T(at));
+            tl.to(cards[i], { scale: 1, opacity: 1, duration: dur, ease: "sine.inOut" }, T(at));
+            // Product pops as the camera settles on it.
+            tl.fromTo(
+              imgs[i],
+              { scale: 0.86, y: 30 },
+              { scale: 1, y: 0, duration: 0.4, ease: "back.out(1.8)", immediateRender: false },
+              T(at + dur * 0.6),
+            );
+            tl.to("#c-rail-fill", { scaleX: i / (STATIONS.length - 1), duration: dur, ease: "sine.inOut" }, T(at));
+            tl.to(dots[i], { backgroundColor: "#F97316", scale: 1.3, duration: 0.2 }, T(s.at - 0.05));
+          });
+          // Idle float on every product (deterministic sine, finite).
+          imgs.forEach(function (im, i) {
+            tl.to(
+              im,
+              { rotation: i % 2 ? 2.5 : -2.5, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: 4 },
+              T(ENTER + 0.4),
+            );
+          });
+          // Mystery "?" throbs on the foldable.
+          tl.fromTo(
+            ".c-q",
+            { scale: 0.6, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2.5)", immediateRender: false },
+            T(11.3),
+          );
+
+          // --- chromatic-aberration-wipe exit.
+          tl.fromTo(
+            "#c-panel",
+            { clipPath: "inset(0% 0% 0% 0%)" },
+            { clipPath: "inset(0% 0% 100% 0%)", duration: 0.4, ease: "power3.inOut", immediateRender: false },
+            T(EXIT),
+          );
+          tl.to("#c-edge", { y: 880, opacity: 0, duration: 0.4, ease: "power3.inOut" }, T(EXIT));
+          tl.set("#c-sheen", { opacity: 1 }, T(EXIT + 0.05));
+          tl.fromTo("#c-sheen", { yPercent: -110 }, { yPercent: 110, duration: 0.32, ease: "power2.inOut", immediateRender: false }, T(EXIT + 0.05));
+          tl.fromTo(
+            "#c-rgb",
+            { opacity: 0, x: -16 },
+            { opacity: 1, x: 16, repeat: 3, yoyo: true, duration: 0.05, ease: "steps(1)", immediateRender: false },
+            T(EXIT + 0.08),
+          );
+          tl.set(["#c-rgb", "#c-sheen"], { opacity: 0 }, T(EXIT + 0.45));
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["c-lista1"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

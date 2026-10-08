@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Edição no Automático</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0A0A0A; --surface: #141414; --surface-2: #1C1C1C; --line: #282828;
+    --text: #FFFFFF; --muted: #A8A8A8; --accent: #F97316; --accent-ink: #0A0A0A; --ok: #A8A8A8;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F6F5F3; --surface: #FFFFFF; --surface-2: #EFEDEA; --line: #E2DFDA;
+      --text: #0A0A0A; --muted: #5E5E5E; --accent: #EA580C; --accent-ink: #FFFFFF;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Montserrat, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  button, input, select { font: inherit; color: inherit; }
+
+  .top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .top-in { max-width: 1440px; margin: 0 auto; padding: 14px 24px; display: flex; gap: 16px 24px; align-items: center; flex-wrap: wrap; }
+  .brand { font-weight: 900; font-size: 18px; letter-spacing: -.02em; white-space: nowrap; }
+  .brand em { font-family: "Playfair Display", serif; font-style: italic; font-weight: 500; color: var(--accent); }
+  nav { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+  nav button { border: 0; background: transparent; font-weight: 700; font-size: 13px; padding: 8px 16px; border-radius: 999px; cursor: pointer; color: var(--muted); white-space: nowrap; }
+  nav button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .ativo { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .ativo select { text-transform: none; letter-spacing: 0; }
+
+  main { max-width: 1440px; margin: 0 auto; padding: 28px 24px 120px; }
+  section[hidden] { display: none; }
+  section { scroll-margin-top: 90px; }
+  h1 { font-weight: 900; font-size: clamp(26px, 4vw, 40px); letter-spacing: -.03em; line-height: 1.05; }
+  h1 em { font-family: "Playfair Display", serif; font-style: italic; font-weight: 500; color: var(--accent); }
+  .sub { color: var(--muted); font-size: 14px; line-height: 1.55; margin: 8px 0 22px; max-width: 680px; }
+  .sub b { color: var(--text); }
+  code { font: 600 12.5px ui-monospace, Menlo, monospace; background: var(--surface-2); padding: 2px 6px; border-radius: 6px; }
+
+  .chip, .field { border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+  .chip small { color: var(--muted); margin-left: 6px; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .chip[aria-pressed="true"] small { color: inherit; opacity: .7; }
+  .field { cursor: text; border-radius: 12px; padding: 10px 14px; outline: none; min-width: 0; }
+  .field:focus { border-color: var(--accent); }
+  select.field { cursor: pointer; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row + .row { margin-top: 10px; }
+  .filters { position: sticky; top: 63px; z-index: 5; background: var(--bg); padding: 10px 0 14px; margin-bottom: 8px; }
+  .scroll-x { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .scroll-x::-webkit-scrollbar { display: none; }
+  .count { color: var(--muted); font-size: 13px; font-weight: 600; margin-left: auto; }
+
+  .btn { border: 1px solid var(--line); background: transparent; font-weight: 700; font-size: 12.5px; padding: 9px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--muted); }
+  .btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn:disabled { opacity: .5; cursor: progress; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+  .card.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .media { position: relative; aspect-ratio: 16 / 9.35; background: #000; cursor: pointer; overflow: hidden; }
+  .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .media.contain img, .media.contain video { object-fit: contain; }
+  .media video { opacity: 0; transition: opacity .2s; }
+  .media.play video { opacity: 1; }
+  .media .noprev { position: absolute; inset: 0; display: grid; place-items: center; color: #6b6b6b; font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+  .tag { position: absolute; left: 10px; top: 10px; background: rgba(10,10,10,.82); color: #fff; font-weight: 800; font-size: 12px; letter-spacing: .08em; padding: 5px 9px; border-radius: 8px; }
+  .tag.r { left: auto; right: 10px; color: #F97316; }
+  .body { padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .name { font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+  .desc { color: var(--muted); font-size: 13px; line-height: 1.45; }
+  .clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .ask { font-size: 12.5px; line-height: 1.45; background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
+  .ask span { color: var(--muted); font-weight: 600; }
+  .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; flex-wrap: wrap; }
+  .actions .btn { flex: 1; }
+  .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pills span { font-size: 11px; font-weight: 700; padding: 3px 7px; border-radius: 6px; background: var(--surface-2); color: var(--muted); }
+
+  /* projetos */
+  .novo { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-bottom: 22px; }
+  .novo h2 { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+  .novo .row > .field { flex: 1 1 200px; }
+  .proj { display: grid; grid-template-columns: 1fr auto; gap: 14px 20px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; }
+  .proj + .proj { margin-top: 10px; }
+  .proj .meta { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  .proj .acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .live { color: var(--accent); font-weight: 800; }
+  .vazio { color: var(--muted); padding: 40px 0; text-align: center; line-height: 1.6; }
+  .log { margin-top: 14px; background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font: 12px/1.5 ui-monospace, Menlo, monospace; white-space: pre-wrap; max-height: 260px; overflow: auto; color: var(--muted); }
+  .log[hidden] { display: none; }
+
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 120px); background: var(--text); color: var(--bg); font-weight: 700; font-size: 13px; padding: 12px 18px; border-radius: 12px; transition: transform .2s; z-index: 30; max-width: calc(100% - 32px); }
+  .toast.on { transform: translate(-50%, 0); }
+  .toast.err { background: #3a1a0a; color: #FDBA74; }
+
+
+  /* estilos */
+  .cmd { display: flex; gap: 8px; align-items: stretch; }
+  .cmd code { flex: 1; min-width: 0; display: block; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; font: 600 12.5px/1.4 ui-monospace, Menlo, monospace; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cmd code b { color: var(--accent); font-weight: 700; }
+  .card .cmd { flex-direction: column; }
+  .card .cmd code { white-space: normal; word-break: break-word; }
+  .grupo-h { display: flex; align-items: baseline; gap: 10px; margin: 26px 0 12px; }
+  .grupo-h h2 { font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
+  .grupo-h span { color: var(--muted); font-size: 13px; }
+  .linhas { display: grid; gap: 8px; }
+  .linha { display: grid; grid-template-columns: minmax(150px, 220px) 1fr minmax(260px, 420px); gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  .linha .name { font-size: 14px; }
+  .linha .desc { font-size: 12.5px; }
+  .tag-r { font-size: 10px; font-weight: 800; letter-spacing: .1em; color: var(--accent); margin-left: 6px; }
+  @media (max-width: 900px) { .linha { grid-template-columns: 1fr; gap: 8px; } }
+
+  /* criação */
+  .bloco { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; margin-bottom: 18px; }
+  .bloco-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .bloco-h h2 { font-size: 17px; font-weight: 800; letter-spacing: -.01em; }
+  .bloco-h .n { color: var(--muted); font-size: 12px; font-weight: 700; }
+  .bloco-h .sp { margin-left: auto; display: flex; gap: 8px; }
+  .bloco.drag { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .topo { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; }
+  .topo .bloco { margin-bottom: 18px; }
+  .marca-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+  .marca-grid .t { aspect-ratio: 1; border-radius: 12px; background: var(--surface-2) center/contain no-repeat; border: 1px solid var(--line); position: relative; overflow: hidden; }
+  .marca-grid .t span { position: absolute; left: 0; right: 0; bottom: 0; font-size: 10.5px; font-weight: 700; padding: 5px 7px; background: rgba(10,10,10,.75); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: var(--muted); margin-top: 12px; }
+  .status b { color: var(--text); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 5px; flex: 0 0 auto; background: var(--line); }
+  .dot.on { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .nums { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .nums div { background: var(--surface-2); border-radius: 12px; padding: 14px; }
+  .nums b { display: block; font-size: 28px; font-weight: 900; letter-spacing: -.03em; }
+  .nums span { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .files { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .files.v916 { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .file { background: var(--surface-2); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+  .file .media { aspect-ratio: 16/9; }
+  .files.v916 .file .media { aspect-ratio: 9/16; }
+  .file .media video { opacity: 1; object-fit: cover; }
+  .file .media .ic { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: var(--muted); letter-spacing: .1em; }
+  .file .fb { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .file .fn { font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file .fm { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .file .btn { padding: 7px 9px; font-size: 12px; }
+  .file audio { width: 100%; height: 32px; }
+  .drop { border: 1.5px dashed var(--line); border-radius: 12px; padding: 18px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 600; }
+  .drop b { color: var(--text); }
+  .subtabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  @media (max-width: 900px) { .topo { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) {
+    .top-in { padding: 12px 16px; }
+    nav { order: 3; width: 100%; overflow-x: auto; }
+    .ativo { margin-left: 0; }
+    main { padding: 20px 16px 120px; }
+    .filters { top: 112px; }
+    .proj { grid-template-columns: 1fr; }
+    .proj .acts { justify-content: flex-start; }
+    .count { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">Edição no <em>Automático</em></div>
+  <nav role="tablist">
+    <button role="tab" data-aba="criacao">Criação</button>
+    <button role="tab" data-aba="estilos">Estilos</button>
+    <button role="tab" data-aba="projetos">Projetos</button>
+    <button role="tab" data-aba="elementos">Elementos <small>108</small></button>
+    <button role="tab" data-aba="catalogo">Catálogo HyperFrames</button>
+  </nav>
+  <label class="ativo">Projeto ativo
+    <select class="field" id="ativo" aria-label="Projeto ativo"></select>
+  </label>
+</div></header>
+
+<main>
+  <!-- CRIAÇÃO -->
+  <section id="aba-criacao" hidden>
+    <h1>Painel de <em>criação</em></h1>
+    <p class="sub">Tudo o que entra e sai dos seus vídeos. <b>Arraste arquivos</b> para qualquer bloco para enviar à pasta certa.</p>
+    <div class="topo">
+      <div class="bloco" data-area="marca">
+        <div class="bloco-h"><h2>Marca</h2><span class="n" id="nMarca"></span>
+          <div class="sp"><button class="btn" data-pasta="marca">Abrir pasta</button><label class="btn pri">Enviar<input type="file" multiple hidden data-enviar="marca" /></label></div></div>
+        <div class="marca-grid" id="marcaGrid"></div>
+        <div class="status" id="marcaStatus"></div>
+      </div>
+      <div class="bloco">
+        <div class="bloco-h"><h2>Resumo</h2></div>
+        <div class="nums" id="nums"></div>
+      </div>
+    </div>
+    <div class="bloco" data-area="materiais">
+      <div class="bloco-h"><h2>Vídeos para editar</h2><span class="n">1-MATERIAIS-PARA-EDITAR</span>
+        <div class="sp"><button class="btn" data-pasta="materiais">Abrir pasta</button><label class="btn pri">Enviar<input type="file" multiple hidden accept="video/*,audio/*" data-enviar="materiais" /></label></div></div>
+      <div class="files v916" id="fMateriais"></div>
+    </div>
+    <div class="bloco" id="blocoAssets" data-area="imagens">
+      <div class="bloco-h"><h2>Assets</h2><span class="n">2-ASSETS</span>
+        <div class="subtabs" id="assetTabs"></div>
+        <div class="sp"><button class="btn" data-pasta="assets">Abrir pasta</button><label class="btn pri">Enviar<input type="file" multiple hidden data-enviar="assets" /></label></div></div>
+      <div class="files" id="fAssets"></div>
+    </div>
+    <div class="bloco" data-area="editados">
+      <div class="bloco-h"><h2>Vídeos editados</h2><span class="n">3-EDITADOS</span>
+        <div class="sp"><button class="btn" data-pasta="editados">Abrir pasta</button></div></div>
+      <div class="files v916" id="fEditados"></div>
+    </div>
+  </section>
+
+  <!-- ESTILOS -->
+  <section id="aba-estilos" hidden>
+    <h1>Seus <em>comandos</em></h1>
+    <p class="sub">Cada estilo é uma skill. <b>Copie o comando e cole no Claude Code</b> aberto nesta pasta. Escolha o vídeo abaixo e os comandos já saem com o nome do arquivo. Quando um vídeo for aprovado com um visual novo, salve-o como estilo e ele aparece em <b>Meus estilos</b>.</p>
+    <div class="filters">
+      <div class="row">
+        <label class="kicker" for="estMaterial" style="margin-right:4px">Vídeo para editar</label>
+        <select class="field" id="estMaterial" style="flex:1 1 260px"></select>
+        <input class="field" id="estQ" type="search" placeholder="Buscar estilo…" style="flex:1 1 200px" />
+      </div>
+    </div>
+    <div id="estLista"><p class="vazio">Carregando…</p></div>
+  </section>
+
+  <!-- PROJETOS -->
+  <section id="aba-projetos">
+    <h1>Seus <em>projetos</em></h1>
+    <p class="sub">Jogue o bruto em <code>1-MATERIAIS-PARA-EDITAR</code>, crie o projeto e abra no <b>editor</b> (HyperFrames Studio). Escolha estilos e elementos aqui; peça a edição ao Claude Code na pasta do framework. O render 4K vai para <code>3-EDITADOS</code>.</p>
+    <form class="novo" id="formNovo">
+      <h2>Novo projeto</h2>
+      <div class="row">
+        <input class="field" name="titulo" placeholder="Nome do vídeo (ex.: Reel automação)" required />
+        <select class="field" name="formato" aria-label="Formato">
+          <option value="9:16">9:16 · Reel / TikTok</option>
+          <option value="16:9">16:9 · Aula / YouTube</option>
+          <option value="1:1">1:1 · Feed</option>
+        </select>
+        <select class="field" name="material" id="materiais" aria-label="Material"></select>
+      </div>
+      <div class="row">
+        <input class="field" name="objetivo" placeholder="Objetivo do vídeo (ex.: ensinar 3 usos de IA e levar para o link da bio)" style="flex:2 1 320px" />
+        <select class="field" name="estilo" id="novoEstilo" aria-label="Estilo"></select>
+        <input class="field" name="identidade" placeholder="Identidade visual (vazio = minha marca)" style="flex:1 1 220px" />
+        <button class="btn pri" type="submit">Criar projeto</button>
+      </div>
+    </form>
+    <div id="listaProj"></div>
+    <pre class="log" id="log" hidden></pre>
+  </section>
+
+  <!-- ELEMENTOS -->
+  <section id="aba-elementos" hidden>
+    <h1>Os 108 <em>elementos</em></h1>
+    <p class="sub">Passe o mouse para ver em movimento. <b>Usar no projeto</b> anota o elemento em <code>ELEMENTOS.md</code> do projeto ativo e copia a referência para <code>.work/elementos/</code>. Na edição, o Claude aplica com as cores do seu <b>MANUAL-DA-MARCA</b>.</p>
+    <div class="filters">
+      <div class="row scroll-x" id="elCats"></div>
+      <div class="row">
+        <input class="field" id="elQ" type="search" placeholder="Buscar: legenda, mapa, 3D, glitch…" style="flex:1 1 220px" />
+        <select class="field" id="elCtx" aria-label="Tipo de vídeo">
+          <option value="">Todo tipo de vídeo</option>
+          <option value="reel-falando">Reel falando pra câmera</option>
+          <option value="so-voz">Só a voz (minimalista)</option>
+          <option value="aula">Aula / tutorial</option>
+          <option value="cliente">Cliente / agência</option>
+          <option value="anuncio">Anúncio / lançamento</option>
+        </select>
+        <button class="chip" id="elSo" aria-pressed="false">Só os do projeto</button>
+        <span class="count" id="elCount"></span>
+      </div>
+    </div>
+    <div class="grid" id="elGrid"></div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section id="aba-catalogo" hidden>
+    <h1>Catálogo <em>HyperFrames</em></h1>
+    <p class="sub">Blocos e componentes prontos do registro oficial. <b>Adicionar ao projeto</b> roda <code>hyperframes add</code> na pasta do projeto ativo. Itens em inglês e 16:9 na maioria: peça ao Claude para adaptar ao seu formato e marca.</p>
+    <div class="filters">
+      <div class="row scroll-x" id="catTags"></div>
+      <div class="row">
+        <input class="field" id="catQ" type="search" placeholder="Buscar: caption, transition, chart, 3d…" style="flex:1 1 220px" />
+        <select class="field" id="catTipo" aria-label="Tipo">
+          <option value="">Blocos e componentes</option>
+          <option value="block">Só blocos</option>
+          <option value="component">Só componentes</option>
+        </select>
+        <span class="count" id="catCount"></span>
+      </div>
+    </div>
+    <div class="grid" id="catGrid"><p class="vazio">Carregando o catálogo…</p></div>
+  </section>
+</main>
+<footer style="max-width:1440px;margin:0 auto;padding:0 24px 40px;color:var(--muted);font-size:12px">Edição no Automático <span id="versao"></span> · <code>npm run atualizar</code> para receber novidades</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+history.scrollRestoration = "manual";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const norm = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const S = { estado: null, el: [], cat: null, ativo: "", elCat: "", elCtx: "", elQ: "", elSo: false, catTag: "", catQ: "", catTipo: "" };
+try { S.ativo = localStorage.getItem("painel-ativo") || ""; } catch (e) {}
+
+async function api(rota, corpo) {
+  const r = await fetch(rota, corpo ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) } : {});
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.erro || "Erro");
+  return j;
+}
+let tt;
+function toast(msg, err) {
+  const t = $("#toast"); t.textContent = msg; t.classList.toggle("err", !!err); t.classList.add("on");
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), err ? 5000 : 2200);
+}
+async function ocupado(btn, fn) {
+  const txt = btn.textContent; btn.disabled = true; btn.textContent = "Aguarde…";
+  try { return await fn(); } catch (e) { toast(e.message, true); } finally { btn.disabled = false; btn.textContent = txt; }
+}
+function copiar(txt) {
+  (navigator.clipboard?.writeText(txt) || Promise.reject()).then(() => toast("Copiado: " + txt.slice(0, 60))).catch(() => {
+    const t = document.createElement("textarea"); t.value = txt; document.body.appendChild(t); t.select();
+    try { document.execCommand("copy"); toast("Pedido copiado"); } catch (e) {} t.remove();
+  });
+}
+
+// ---------- abas ----------
+function aba(nome) {
+  document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-selected", b.dataset.aba === nome));
+  ["criacao", "estilos", "projetos", "elementos", "catalogo"].forEach((s) => ($("#aba-" + s).hidden = s !== nome));
+  if (location.hash.slice(1) !== nome) history.replaceState(null, "", "#" + nome);
+  window.scrollTo(0, 0);
+  setTimeout(() => window.scrollTo(0, 0), 0); // o navegador também rola até o #id da aba
+  if (nome === "catalogo" && !S.cat) carregarCatalogo();
+}
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (["criacao", "estilos", "projetos", "elementos", "catalogo"].includes(h)) aba(h); });
+document.querySelector("nav").addEventListener("click", (e) => { const b = e.target.closest("[data-aba]"); if (b) aba(b.dataset.aba); });
+
+// ---------- estado / projeto ativo ----------
+async function carregar() {
+  S.estado = await api("/api/estado");
+  $("#versao").textContent = S.estado.versao ? "v" + S.estado.versao : "";
+  const ps = S.estado.projetos;
+  if (!ps.find((p) => p.slug === S.ativo)) S.ativo = ps[0]?.slug || "";
+  $("#ativo").innerHTML = ps.length ? ps.map((p) => `<option value="${p.slug}"${p.slug === S.ativo ? " selected" : ""}>${esc(p.titulo)}</option>`).join("") : `<option value="">Nenhum projeto</option>`;
+  $("#materiais").innerHTML = `<option value="">Sem material (começar do zero)</option>` + S.estado.materiais.map((m) => `<option>${esc(m)}</option>`).join("");
+  renderProjetos(); renderElementos(); renderCriacao(); renderEstilos();
+}
+$("#ativo").addEventListener("change", (e) => { S.ativo = e.target.value; try { localStorage.setItem("painel-ativo", S.ativo); } catch (er) {} renderProjetos(); renderElementos(); });
+const projAtivo = () => S.estado?.projetos.find((p) => p.slug === S.ativo);
+function exigeProjeto() { if (!S.ativo) { toast("Crie um projeto primeiro (aba Projetos).", true); aba("projetos"); return false; } return true; }
+
+// ---------- projetos ----------
+function renderProjetos() {
+  const ps = S.estado.projetos;
+  $("#listaProj").innerHTML = ps.length ? ps.map((p) => `
+    <div class="proj" data-slug="${p.slug}">
+      <div>
+        <div class="name">${esc(p.titulo)} ${p.slug === S.ativo ? '<span class="kicker" style="color:var(--accent)">· ativo</span>' : ""}</div>
+        <div class="meta">5-PROJETOS/${p.slug} · ${p.formato} · ${p.elementos.length} elemento(s)${p.renders.length ? ` · ${p.renders.length} render(s)` : ""}${p.editor ? ` · <span class="live">editor aberto</span>` : ""}</div>
+        ${p.elementos.length ? `<div class="pills" style="margin-top:8px">${p.elementos.map((c) => `<span>${c}</span>`).join("")}</div>` : ""}
+      </div>
+      <div class="acts">
+        <button class="btn pri" data-a="editor">${p.editor ? "Ir para o editor" : "Abrir no editor"}</button>
+        <button class="btn" data-a="elementos">Elementos</button>
+        <button class="btn" data-a="check">Check</button>
+        <button class="btn" data-a="draft">Rascunho</button>
+        <button class="btn" data-a="delivery">Render 4K</button>
+        <button class="btn" data-a="estilo">Salvar como estilo</button>
+      </div>
+    </div>`).join("") : `<p class="vazio">Nenhum projeto ainda.<br>Coloque um vídeo em <code>1-MATERIAIS-PARA-EDITAR</code> e crie o primeiro acima.</p>`;
+}
+$("#listaProj").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-a]"); if (!b) return;
+  const slug = b.closest(".proj").dataset.slug, a = b.dataset.a;
+  S.ativo = slug; $("#ativo").value = slug;
+  if (a === "elementos") return aba("elementos");
+  if (a === "estilo") {
+    const nome = prompt("Nome do estilo (curto, ex.: dica-rapida). O comando vai ser /estilo-<nome>:");
+    if (!nome) return;
+    await ocupado(b, async () => {
+      const r = await api("/api/criar-estilo", { slug, nome });
+      S.est = null; await carregarEstilos();
+      copiar(`/criar-estilo completa a skill ${r.nome} a partir do projeto ${slug}`);
+      toast(`${r.comando} criado. Pedido para completar copiado: cole no Claude Code.`);
+      aba("estilos");
+    });
+    return;
+  }
+  if (a === "editor") {
+    const win = window.open("about:blank", "_blank");
+    await ocupado(b, async () => {
+      try { const r = await api("/api/editor", { slug }); win ? (win.location = r.url) : window.open(r.url, "_blank"); toast("Editor aberto em " + r.url); }
+      catch (er) { win?.close(); throw er; }
+    });
+    return carregar();
+  }
+  const log = $("#log");
+  await ocupado(b, async () => {
+    log.hidden = false; log.textContent = a === "check" ? "Rodando check…" : "Renderizando… (pode levar alguns minutos)";
+    const r = a === "check" ? await api("/api/check", { slug }) : await api("/api/render", { slug, qualidade: a });
+    log.textContent = r.saida || `Pronto: ${r.arquivo}${a === "delivery" ? "\nCópia em 3-EDITADOS/" : ""}`;
+    if (a !== "check") toast("Render pronto");
+  });
+  carregar();
+});
+$("#formNovo").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target), b = e.target.querySelector("button");
+  await ocupado(b, async () => {
+    const r = await api("/api/projetos", Object.fromEntries(f));
+    S.ativo = r.slug; try { localStorage.setItem("painel-ativo", r.slug); } catch (er) {}
+    e.target.reset(); toast("Projeto criado: " + r.slug); await carregar();
+  });
+});
+
+// ---------- elementos ----------
+function renderElementos() {
+  if (!S.el.length) return;
+  const usados = new Set(projAtivo()?.elementos || []);
+  const cats = [...new Map(S.el.map((e) => [e.prefixo, e.categoria])).entries()];
+  if (!$("#elCats").children.length)
+    $("#elCats").innerHTML = `<button class="chip" data-c="" aria-pressed="true">Todos<small>${S.el.length}</small></button>` + cats.map(([p, n]) => `<button class="chip" data-c="${p}" aria-pressed="false">${esc(n)}<small>${p}</small></button>`).join("");
+  const lista = S.el.filter((e) => (!S.elCat || e.prefixo === S.elCat) && (!S.elCtx || e.contextos.includes(S.elCtx)) && (!S.elSo || usados.has(e.codigo)) &&
+    (!S.elQ || norm([e.codigo, e.nome, e.categoria, e.oque, e.base, e.pedir].join(" ")).includes(S.elQ)));
+  $("#elCount").textContent = `${lista.length} de ${S.el.length}`;
+  $("#elGrid").innerHTML = lista.length ? lista.map((e) => `
+    <article class="card${usados.has(e.codigo) ? " on" : ""}" data-k="${e.codigo}">
+      <div class="media" data-src="/4-ELEMENTOS/${e.pasta}/preview.mp4">
+        <img src="/4-ELEMENTOS/${e.pasta}/poster.jpg" alt="${esc(e.nome)}" loading="lazy" />
+        <span class="tag">${e.codigo}</span>
+      </div>
+      <div class="body">
+        <div class="kicker">${esc(e.categoria)}</div>
+        <div class="name">${esc(e.nome)}</div>
+        <div class="desc">${esc(e.oque)}</div>
+        ${e.pedir ? `<div class="ask"><span>Você informa:</span> ${esc(e.pedir)}</div>` : ""}
+        <div class="actions">
+          <button class="btn" data-a="copiar">Copiar pedido</button>
+          <button class="btn pri" data-a="usar">${usados.has(e.codigo) ? "No projeto ✓" : "Usar no projeto"}</button>
+        </div>
+      </div>
+    </article>`).join("") : `<p class="vazio">Nenhum elemento com esse filtro.</p>`;
+}
+$("#elCats").addEventListener("click", (e) => { const b = e.target.closest("[data-c]"); if (!b) return; S.elCat = b.dataset.c; $("#elCats").querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === b)); renderElementos(); });
+$("#elQ").addEventListener("input", (e) => { S.elQ = norm(e.target.value.trim()); renderElementos(); });
+$("#elCtx").addEventListener("change", (e) => { S.elCtx = e.target.value; renderElementos(); });
+$("#elSo").addEventListener("click", (e) => { S.elSo = !S.elSo; e.target.setAttribute("aria-pressed", S.elSo); renderElementos(); });
+$("#elGrid").addEventListener("click", async (ev) => {
+  const card = ev.target.closest(".card"); if (!card) return;
+  const e = S.el.find((x) => x.codigo === card.dataset.k), a = ev.target.closest("[data-a]")?.dataset.a;
+  if (ev.target.closest(".media")) return tocar(card.querySelector(".media"));
+  if (a === "copiar") copiar(`usa ${e.codigo} (${e.nome})` + (e.pedir ? ` — ${e.pedir}` : ""));
+  if (a === "usar" && exigeProjeto()) {
+    const b = ev.target.closest("[data-a]");
+    await ocupado(b, async () => {
+      if ((projAtivo()?.elementos || []).includes(e.codigo)) { await api("/api/remover", { codigo: e.codigo, slug: S.ativo }); toast(`${e.codigo} removido`); }
+      else { await api("/api/usar", { codigo: e.codigo, slug: S.ativo }); toast(`${e.codigo} → ${projAtivo()?.titulo}`); }
+    });
+    await carregar();
+  }
+});
+
+// ---------- catálogo HyperFrames ----------
+async function carregarCatalogo() {
+  try { S.cat = await api("/api/catalogo"); } catch (e) { $("#catGrid").innerHTML = `<p class="vazio">Não deu para carregar o catálogo: ${esc(e.message)}</p>`; return; }
+  const cont = {}; S.cat.forEach((i) => (i.tags || []).forEach((t) => (cont[t] = (cont[t] || 0) + 1)));
+  const tags = Object.entries(cont).filter(([, n]) => n >= 6).sort((a, b) => b[1] - a[1]).slice(0, 24);
+  $("#catTags").innerHTML = `<button class="chip" data-t="" aria-pressed="true">Todos<small>${S.cat.length}</small></button>` + tags.map(([t, n]) => `<button class="chip" data-t="${esc(t)}" aria-pressed="false">${esc(t)}<small>${n}</small></button>`).join("");
+  renderCatalogo();
+}
+function renderCatalogo() {
+  if (!S.cat) return;
+  const lista = S.cat.filter((i) => (!S.catTag || (i.tags || []).includes(S.catTag)) && (!S.catTipo || i.type === S.catTipo) &&
+    (!S.catQ || norm([i.name, i.title, i.description, ...(i.tags || [])].join(" ")).includes(S.catQ)));
+  $("#catCount").textContent = `${lista.length} de ${S.cat.length}`;
+  $("#catGrid").innerHTML = lista.length ? lista.map((i) => {
+    const d = i.dimensions ? `${i.dimensions.width}×${i.dimensions.height}` : "";
+    return `
+    <article class="card" data-k="${esc(i.name)}">
+      <div class="media contain" ${i.preview?.video ? `data-src="${esc(i.preview.video)}"` : ""}>
+        ${i.preview?.poster ? `<img src="${esc(i.preview.poster)}" alt="${esc(i.title)}" loading="lazy" />` : `<div class="noprev">${esc(i.type)}</div>`}
+        <span class="tag">${i.type === "block" ? "BLOCO" : "COMPONENTE"}</span>${d ? `<span class="tag r">${d}</span>` : ""}
+      </div>
+      <div class="body">
+        <div class="kicker">${esc(i.name)}</div>
+        <div class="name">${esc(i.title)}</div>
+        <div class="desc clamp">${esc(i.description)}</div>
+        <div class="pills">${(i.tags || []).slice(0, 5).map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+        <div class="actions">
+          <button class="btn" data-a="copiar">Copiar pedido</button>
+          <button class="btn pri" data-a="add">Adicionar ao projeto</button>
+        </div>
+      </div>
+    </article>`; }).join("") : `<p class="vazio">Nada encontrado.</p>`;
+}
+$("#catTags").addEventListener("click", (e) => { const b = e.target.closest("[data-t]"); if (!b) return; S.catTag = b.dataset.t; $("#catTags").querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === b)); renderCatalogo(); });
+$("#catQ").addEventListener("input", (e) => { S.catQ = norm(e.target.value.trim()); renderCatalogo(); });
+$("#catTipo").addEventListener("change", (e) => { S.catTipo = e.target.value; renderCatalogo(); });
+$("#catGrid").addEventListener("click", async (ev) => {
+  const card = ev.target.closest(".card"); if (!card) return;
+  const nome = card.dataset.k, a = ev.target.closest("[data-a]")?.dataset.a;
+  if (ev.target.closest(".media")) return tocar(card.querySelector(".media"));
+  if (a === "copiar") copiar(`usa o item do catálogo HyperFrames \`${nome}\`, adaptado ao formato do projeto e ao MANUAL-DA-MARCA`);
+  if (a === "add" && exigeProjeto()) {
+    await ocupado(ev.target.closest("[data-a]"), async () => { await api("/api/catalogo/add", { nome, slug: S.ativo }); toast(`${nome} instalado em ${projAtivo()?.titulo}`); });
+  }
+});
+
+
+// ---------- criação ----------
+S.arq = null; S.assetAba = "imagens";
+const kb = (n) => n > 1e9 ? (n / 1e9).toFixed(1) + " GB" : n > 1e6 ? (n / 1e6).toFixed(0) + " MB" : Math.max(1, Math.round(n / 1e3)) + " KB";
+async function carregarArquivos() { S.arq = await api("/api/arquivos"); renderCriacao(); }
+function tile(f, extra = "") {
+  const media = f.tipo === "video" ? `<div class="media" data-src="${esc(f.url)}"><video src="${esc(f.url)}#t=0.5" muted playsinline preload="metadata"></video></div>`
+    : f.tipo === "imagem" ? `<div class="media"><img src="${esc(f.url)}" alt="${esc(f.nome)}" loading="lazy" style="object-fit:contain;background:#000" /></div>`
+    : `<div class="media"><div class="ic">${f.tipo === "audio" ? "ÁUDIO" : f.nome.split(".").pop().toUpperCase()}</div></div>`;
+  return `<div class="file">${media}<div class="fb"><div class="fn" title="${esc(f.nome)}">${esc(f.nome)}</div><div class="fm">${kb(f.tamanho)} · ${new Date(f.data).toLocaleDateString("pt-BR")}</div>${f.tipo === "audio" ? `<audio controls preload="none" src="${esc(f.url)}"></audio>` : ""}${extra}</div></div>`;
+}
+function renderCriacao() {
+  const A = S.arq; if (!A) return;
+  const imgs = A.marca.itens.filter((f) => f.tipo === "imagem"), docs = A.marca.itens.filter((f) => f.tipo !== "imagem");
+  $("#nMarca").textContent = "0-MARCA/assets";
+  $("#marcaGrid").innerHTML = imgs.length ? imgs.map((f) => `<div class="t" style="background-image:url('${encodeURI(f.url)}')"><span>${esc(f.nome)}</span></div>`).join("") + docs.map((f) => `<div class="t" style="display:grid;place-items:center;font-weight:800;color:var(--muted)">${f.nome.split(".").pop().toUpperCase()}<span>${esc(f.nome)}</span></div>`).join("")
+    : `<div class="drop" style="grid-column:1/-1">Arraste aqui <b>logo</b>, <b>foto de perfil</b>, design system ou <b>manual da marca</b>.<br>Sem nada? O Claude faz uma entrevista e cria o manual.</div>`;
+  const m = A.manual, cores = m ? [...new Set(m.match(/#[0-9A-Fa-f]{6}\b/g) || [])].slice(0, 8) : [];
+  $("#marcaStatus").innerHTML = m
+    ? `<span class="dot on"></span><div><b>MANUAL-DA-MARCA.md pronto.</b> Todos os estilos usam essas cores e fontes.${cores.length ? `<div class="pills" style="margin-top:8px">${cores.map((c) => `<span style="display:inline-flex;gap:6px;align-items:center"><i style="width:12px;height:12px;border-radius:3px;background:${c};border:1px solid var(--line)"></i>${c}</span>`).join("")}</div>` : ""}</div>`
+    : `<span class="dot"></span><div><b>Marca ainda não configurada.</b> No Claude Code, peça: <code>configura minha marca</code>. Ele lê o que estiver aqui ou faz a entrevista.</div>`;
+  const ps = S.estado?.projetos || [];
+  $("#nums").innerHTML = [[A.materiais.itens.filter((f) => f.tipo !== "doc").length, "para editar"], [ps.length, "projetos"], [A.editados.itens.filter((f) => f.tipo === "video").length, "editados"], [["imagens", "broll", "trilhas", "sfx"].reduce((n, k) => n + A[k].itens.length, 0), "assets"]]
+    .map(([n, t]) => `<div><b>${n}</b><span>${t}</span></div>`).join("");
+  const mats = A.materiais.itens.filter((f) => f.tipo === "video" || f.tipo === "audio");
+  $("#fMateriais").innerHTML = mats.length ? mats.map((f) => tile(f, `<button class="btn pri" data-criar="${esc(f.nome)}">Criar projeto</button>`)).join("") : `<div class="drop" style="grid-column:1/-1">Arraste aqui os <b>vídeos brutos</b> (.MOV, .mp4) ou o <b>áudio</b> da locução.</div>`;
+  const abas = ["imagens", "broll", "trilhas", "sfx"];
+  $("#assetTabs").innerHTML = abas.map((k) => `<button class="chip" data-asset="${k}" aria-pressed="${k === S.assetAba}">${A[k].rotulo}<small>${A[k].itens.length}</small></button>`).join("");
+  $("#blocoAssets").dataset.area = S.assetAba;
+  const it = A[S.assetAba].itens;
+  $("#fAssets").innerHTML = it.length ? it.map((f) => tile(f)).join("") : `<div class="drop" style="grid-column:1/-1">Arraste ${S.assetAba === "imagens" ? "imagens e prints" : S.assetAba === "broll" ? "vídeos de apoio" : S.assetAba === "trilhas" ? "músicas" : "efeitos sonoros"} para <b>2-ASSETS/${S.assetAba}</b>.</div>`;
+  const eds = A.editados.itens.filter((f) => f.tipo === "video");
+  $("#fEditados").innerHTML = eds.length ? eds.map((f) => tile(f, `<a class="btn" href="${esc(f.url)}" download style="text-align:center;text-decoration:none">Baixar</a>`)).join("") : `<div class="drop" style="grid-column:1/-1">Os renders 4K de cada projeto aparecem aqui.</div>`;
+}
+$("#assetTabs").addEventListener("click", (e) => { const b = e.target.closest("[data-asset]"); if (b) { S.assetAba = b.dataset.asset; renderCriacao(); } });
+document.addEventListener("click", async (e) => {
+  const p = e.target.closest("[data-pasta]");
+  if (p) { const area = p.dataset.pasta === "assets" ? S.assetAba : p.dataset.pasta; api("/api/abrir-pasta", { area }).catch((er) => toast(er.message, true)); }
+  const c = e.target.closest("[data-criar]");
+  if (c) {
+    const nome = prompt("Nome do projeto:", c.dataset.criar.replace(/\.[^.]+$/, ""));
+    if (!nome) return;
+    const formato = confirm("Vertical 9:16 (Reel)? OK = 9:16 · Cancelar = 16:9") ? "9:16" : "16:9";
+    await ocupado(c, async () => {
+      const r = await api("/api/projetos", { titulo: nome, formato, material: c.dataset.criar });
+      S.ativo = r.slug; try { localStorage.setItem("painel-ativo", r.slug); } catch (er) {}
+      toast("Projeto criado: " + r.slug); await carregar(); aba("projetos");
+    });
+  }
+});
+async function enviar(area, files) {
+  if (area === "assets") area = S.assetAba;
+  for (const f of files) {
+    toast(`Enviando ${f.name}…`);
+    try { await fetch(`/api/enviar?area=${area}&nome=${encodeURIComponent(f.name)}`, { method: "POST", body: f }).then(async (r) => { if (!r.ok) throw new Error((await r.json()).erro); }); }
+    catch (er) { toast(er.message, true); }
+  }
+  toast(`${files.length} arquivo(s) enviado(s)`); carregarArquivos();
+}
+document.addEventListener("change", (e) => { const i = e.target.closest("[data-enviar]"); if (i && i.files.length) { enviar(i.dataset.enviar, [...i.files]); i.value = ""; } });
+document.querySelectorAll("[data-area]").forEach((b) => {
+  b.addEventListener("dragover", (e) => { e.preventDefault(); b.classList.add("drag"); });
+  b.addEventListener("dragleave", (e) => { if (!b.contains(e.relatedTarget)) b.classList.remove("drag"); });
+  b.addEventListener("drop", (e) => { e.preventDefault(); b.classList.remove("drag"); if (e.dataTransfer.files.length) enviar(b.dataset.area, [...e.dataTransfer.files]); });
+});
+
+// ---------- estilos (comandos) ----------
+S.est = null; S.estQ = ""; S.estMat = "";
+async function carregarEstilos() { S.est = await api("/api/estilos"); renderEstilos(); }
+function comandoDe(e) {
+  const arq = S.estMat || "<arquivo>";
+  return e.comando.replace("{arquivo}", arq);
+}
+function cmdHtml(e) {
+  const c = esc(comandoDe(e)).replace(/^(\/[\w-]+)/, "<b>$1</b>");
+  return `<div class="cmd"><code title="${esc(comandoDe(e))}">${c}</code><button class="btn pri" data-copiar="${esc(e.nome)}">Copiar</button></div>`;
+}
+function renderEstilos() {
+  if (!S.est) return;
+  const mats = S.estado?.materiais || [];
+  const sel = $("#estMaterial");
+  if (sel.options.length !== mats.length + 1) sel.innerHTML = `<option value="">(nenhum: o comando sai com &lt;arquivo&gt;)</option>` + mats.map((m) => `<option>${esc(m)}</option>`).join("");
+  sel.value = S.estMat;
+  $("#novoEstilo").innerHTML = `<option value="">Estilo (decidir depois)</option>` + S.est.filter((e) => /estilos/.test(e.grupo)).map((e) => `<option value="${esc(e.nome)}">/${esc(e.nome)}</option>`).join("");
+  const q = S.estQ, f = (e) => !q || norm([e.nome, e.resumo, e.description].join(" ")).includes(q);
+  const grupo = (g, titulo, sub) => {
+    const it = S.est.filter((e) => e.grupo === g && f(e));
+    const vazio = g === "meus-estilos" ? `<p class="vazio" style="padding:20px 0">Nenhum ainda. Quando um vídeo for aprovado, use <b>Salvar como estilo</b> na aba Projetos ou peça <code>/criar-estilo</code>.</p>` : "";
+    if (!it.length && !vazio) return "";
+    const cards = g === "estilos" || g === "meus-estilos";
+    return `<div class="grupo-h"><h2>${titulo}</h2><span>${sub}</span></div>` + (!it.length ? vazio : cards
+      ? `<div class="grid">${it.map((e) => `
+        <article class="card">
+          <div class="media" ${e.video ? `data-src="${esc(e.video)}"` : ""}>
+            ${e.poster ? `<img src="${esc(e.poster)}" alt="" loading="lazy" />` : e.video ? `<video src="${esc(e.video)}#t=1" muted playsinline preload="metadata" style="opacity:1"></video>` : `<div class="noprev">sem exemplo</div>`}
+            <span class="tag">/${esc(e.nome)}</span>
+          </div>
+          <div class="body">
+            <div class="name">${esc(e.nome.replace(/^estilo-/, "").replace(/-/g, " "))}${e.rascunho ? '<span class="tag-r">RASCUNHO</span>' : ""}</div>
+            <div class="desc clamp">${esc(e.resumo)}</div>
+            <div class="actions" style="display:block">${cmdHtml(e)}</div>
+          </div>
+        </article>`).join("")}</div>`
+      : `<div class="linhas">${it.map((e) => `<div class="linha"><div class="name">/${esc(e.nome)}</div><div class="desc clamp">${esc(e.resumo)}</div>${cmdHtml(e)}</div>`).join("")}</div>`);
+  };
+  $("#estLista").innerHTML =
+    grupo("nucleo", "Comandos do dia a dia", "começar, marca, projeto, cortes, entrega, salvar estilo") +
+    grupo("estilos", "Estilos do curso", "passe o mouse para ver o exemplo") +
+    grupo("meus-estilos", "Meus estilos", "criados a partir dos seus vídeos aprovados") +
+    grupo("pecas", "Peças", "elementos, imagens, trilha");
+}
+$("#estMaterial").addEventListener("change", (e) => { S.estMat = e.target.value; renderEstilos(); });
+$("#estQ").addEventListener("input", (e) => { S.estQ = norm(e.target.value.trim()); renderEstilos(); });
+$("#estLista").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-copiar]"); if (b) { copiar(comandoDe(S.est.find((x) => x.nome === b.dataset.copiar))); return; }
+  const m = e.target.closest(".media"); if (m) tocar(m);
+});
+
+// ---------- preview em vídeo (hover no desktop, toque no celular) ----------
+function tocar(m, on = !m.classList.contains("play")) {
+  if (!m.dataset.src) return;
+  let v = m.querySelector("video");
+  if (on && !v) { v = document.createElement("video"); Object.assign(v, { src: m.dataset.src, muted: true, loop: true, playsInline: true }); v.setAttribute("muted", ""); m.appendChild(v); }
+  if (!v) return;
+  m.classList.toggle("play", on); on ? v.play().catch(() => {}) : v.pause();
+}
+document.addEventListener("mouseover", (e) => { const m = e.target.closest?.(".media"); if (m) tocar(m, true); });
+document.addEventListener("mouseout", (e) => { const m = e.target.closest?.(".media"); if (m && !m.contains(e.relatedTarget)) tocar(m, false); });
+
+// ---------- início ----------
+(async () => {
+  aba(location.hash.slice(1) || "criacao");
+  S.el = await api("/api/elementos");
+  await carregar();
+  await carregarArquivos();
+  await carregarEstilos();
+  setTimeout(() => window.scrollTo(0, 0), 50); // o #aba na URL faz o navegador rolar até a seção
+})().catch((e) => toast(e.message, true));
+</script>
+</body>
+</html>

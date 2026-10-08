@@ -1,0 +1,196 @@
+<!doctype html>
+<!--
+  Beat A (front layer) — "NÃO SABE CRIAR" builds word by word on tight dark
+  slabs, then "PRODUTO" slams in on a yellow plate.
+  Mechanics borrowed from: per-word-rise (blur-to-sharp word arrival),
+  shutter-slam (scale slam integrated over a shutter: ghost copies trail the
+  word and decay), beat-accent (radial impact flash + ring at the hit).
+  Local time == global time (mounted at 0).
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          font-family: "Montserrat", sans-serif;
+        }
+        #af-block {
+          position: absolute;
+          left: 0;
+          width: 1080px;
+          top: 1150px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 18px;
+        }
+        #af-line1 {
+          display: flex;
+          gap: 14px;
+        }
+        .af-word {
+          display: inline-block;
+          padding: 10px 22px 12px;
+          background: #0A0A0A;
+          color: #ffffff;
+          font-weight: 900;
+          font-size: 76px;
+          line-height: 1;
+          letter-spacing: 0.005em;
+          text-transform: uppercase;
+          border-radius: 10px;
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+          opacity: 0;
+        }
+        #af-slam-wrap {
+          position: relative;
+          width: 1080px;
+          height: 230px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .af-plate {
+          position: absolute;
+          padding: 14px 40px 18px;
+          background: #F97316;
+          color: #0A0A0A;
+          font-weight: 900;
+          font-size: 150px;
+          line-height: 1;
+          letter-spacing: -0.01em;
+          text-transform: uppercase;
+          border-radius: 16px;
+          box-shadow: 0 22px 60px rgba(0, 0, 0, 0.5);
+          transform-origin: 50% 50%;
+          opacity: 0;
+        }
+        .af-ghost {
+          box-shadow: none;
+        }
+        #af-flash {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 900px;
+          height: 900px;
+          margin: -450px 0 0 -450px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(255, 190, 140, 0.85) 0%,
+            rgba(249, 115, 22, 0.45) 22%,
+            rgba(249, 115, 22, 0.12) 46%,
+            rgba(249, 115, 22, 0) 70%
+          );
+          opacity: 0;
+        }
+        #af-ring {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 520px;
+          height: 520px;
+          margin: -260px 0 0 -260px;
+          border-radius: 50%;
+          border: 8px solid rgba(249, 115, 22, 0.9);
+          opacity: 0;
+        }
+      </style>
+      <div id="root" data-composition-id="a-front" data-width="1080" data-height="1920">
+        <div id="af-block">
+          <div id="af-line1">
+            <span class="af-word" id="af-w0">NÃO</span>
+            <span class="af-word" id="af-w1">SABE</span>
+            <span class="af-word" id="af-w2">CRIAR</span>
+          </div>
+          <div id="af-slam-wrap">
+            <div id="af-flash"></div>
+            <div id="af-ring"></div>
+            <div class="af-plate af-ghost" id="af-g3">PRODUTO</div>
+            <div class="af-plate af-ghost" id="af-g2">PRODUTO</div>
+            <div class="af-plate af-ghost" id="af-g1">PRODUTO</div>
+            <div class="af-plate" id="af-plate">PRODUTO</div>
+          </div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var W = [
+            ["#af-w0", 0.33],
+            ["#af-w1", 0.67],
+            ["#af-w2", 1.13],
+          ];
+          var HIT = 1.69;
+          var SLAM = 0.14;
+          var EXIT = 2.5;
+          var tl = gsap.timeline({ paused: true });
+
+          // per-word-rise: blur-to-sharp lift, soft landing.
+          W.forEach(function (w) {
+            tl.fromTo(
+              w[0],
+              { opacity: 0, y: 36, filter: "blur(10px)", scale: 0.92 },
+              { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, duration: 0.22, ease: "power3.out" },
+              w[1] - 0.04,
+            );
+          });
+
+          // shutter-slam: the plate lands from scale 3.2; ghosts lag behind
+          // and decay, reading as shutter-integrated motion blur.
+          var ghosts = [
+            ["#af-g1", 0.03, 0.5],
+            ["#af-g2", 0.06, 0.32],
+            ["#af-g3", 0.09, 0.18],
+          ];
+          tl.fromTo(
+            "#af-plate",
+            { opacity: 0, scale: 3.2, rotation: -6 },
+            { opacity: 1, scale: 1, rotation: -2, duration: SLAM, ease: "power2.in" },
+            HIT - SLAM,
+          );
+          tl.set("#af-plate", { opacity: 1 }, HIT - SLAM);
+          ghosts.forEach(function (g) {
+            tl.fromTo(
+              g[0],
+              { opacity: 0, scale: 3.2, rotation: -6 },
+              { opacity: g[2], scale: 1 + g[1] * 3, rotation: -2, duration: SLAM, ease: "power2.in" },
+              HIT - SLAM + g[1] * 0.4,
+            );
+            tl.to(g[0], { opacity: 0, scale: 1, duration: 0.12, ease: "power2.out" }, HIT);
+          });
+          // Settle: tiny overshoot after the hit.
+          tl.to("#af-plate", { scale: 1.06, duration: 0.07, ease: "power2.out" }, HIT);
+          tl.to("#af-plate", { scale: 1, rotation: -2, duration: 0.25, ease: "back.out(2.4)" }, HIT + 0.07);
+
+          // beat-accent: radial flash + expanding ring at the hit.
+          tl.fromTo("#af-flash", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.08, ease: "expo.out" }, HIT);
+          tl.to("#af-flash", { opacity: 0, scale: 1.25, duration: 0.4, ease: "power2.out" }, HIT + 0.08);
+          gsap.set("#af-ring", { opacity: 0 });
+          tl.fromTo(
+            "#af-ring",
+            { opacity: 0.95, scale: 0.35 },
+            { opacity: 0, scale: 1.7, duration: 0.5, ease: "expo.out", immediateRender: false },
+            HIT,
+          );
+          // Line 1 recoils from the impact.
+          tl.to("#af-line1", { y: -10, duration: 0.06, ease: "power2.out" }, HIT);
+          tl.to("#af-line1", { y: 0, duration: 0.3, ease: "back.out(3)" }, HIT + 0.06);
+
+          // Exit: block drops and fades.
+          tl.to("#af-block", { y: 60, opacity: 0, duration: 0.12, ease: "power3.in" }, EXIT);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["a-front"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

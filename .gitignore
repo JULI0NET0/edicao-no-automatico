@@ -1,0 +1,23 @@
+# ===== Dados do aluno: nunca vão para o git (o `npm run atualizar` não mexe neles) =====
+0-MARCA/MANUAL-DA-MARCA.md
+0-MARCA/previa.html
+0-MARCA/avatar.jpg
+0-MARCA/fontes/
+0-MARCA/assets/*
+1-MATERIAIS-PARA-EDITAR/*
+2-ASSETS/imagens/*
+2-ASSETS/broll/*
+2-ASSETS/trilhas/*
+2-ASSETS/sfx/*
+3-EDITADOS/*
+5-PROJETOS/*
+_SISTEMA/skills/meus-estilos/*
+# as pastas vazias continuam existindo
+!**/.gitkeep
+
+# ===== Gerado na instalação =====
+.claude/skills/
+.agents/skills/
+_SISTEMA/ferramentas/.cache-catalogo.json
+node_modules/
+.DS_Store

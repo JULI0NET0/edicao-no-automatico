@@ -1,0 +1,29 @@
+{
+  "name": "edicao-no-automatico",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework de edição de vídeo com IA: painel, editor HyperFrames, 108 elementos e catálogo.",
+  "config": {
+    "hyperframes": "0.8.94",
+    "porta": "3020",
+    "repo": "JULI0NET0/edicao-no-automatico"
+  },
+  "scripts": {
+    "hyperframes": "node _SISTEMA/ferramentas/painel/servidor.mjs",
+    "start": "node _SISTEMA/ferramentas/painel/servidor.mjs",
+    "editor": "node _SISTEMA/ferramentas/cli.mjs editor",
+    "novo": "node _SISTEMA/ferramentas/cli.mjs novo",
+    "elementos": "node _SISTEMA/ferramentas/painel/servidor.mjs --aba=elementos",
+    "catalogo": "node _SISTEMA/ferramentas/cli.mjs catalogo",
+    "usar": "node _SISTEMA/ferramentas/cli.mjs usar",
+    "check": "node _SISTEMA/ferramentas/cli.mjs check",
+    "render": "node _SISTEMA/ferramentas/cli.mjs render",
+    "testar": "node _SISTEMA/ferramentas/testar.mjs",
+    "criar-estilo": "node _SISTEMA/ferramentas/criar-estilo.mjs",
+    "atualizar": "node _SISTEMA/ferramentas/atualizar.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+  Estilo 3 (camada da FRENTE) — chips de vidro em 3D, na frente do recorte do Julio, dando profundidade:
+  ANTES (relógio · HORAS) em 1.45 → DEPOIS (raio · SEGUNDOS, laranja) em 3.15. Tempos LOCAIS (s).
+-->
+<html lang="pt-BR">
+  <head><meta charset="UTF-8"></head>
+  <body>
+    <template>
+      <style>
+        #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; font-family: "Montserrat", sans-serif; }
+        #d-scene { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; perspective: 1400px; }
+        .d-chip {
+          position: absolute; left: 50px; top: 1500px; width: 470px; height: 150px; border-radius: 42px; opacity: 0;
+          display: flex; align-items: center; gap: 24px; padding: 0 34px;
+          background: linear-gradient(150deg, rgba(40,40,40,.94), rgba(14,14,14,.96));
+          border: 4px solid #282828; box-shadow: 0 30px 70px rgba(0,0,0,.6);
+          transform-origin: 0% 50%;
+        }
+        .d-chip svg { width: 84px; height: 84px; flex: 0 0 84px; }
+        .d-chip .t1 { color: #A8A8A8; font-weight: 800; font-size: 24px; letter-spacing: .3em; line-height: 1; }
+        .d-chip .t2 { color: #fff; font-weight: 900; font-size: 46px; letter-spacing: .02em; line-height: 1.1; margin-top: 8px; }
+        #d-after { border-color: #F97316; box-shadow: 0 0 0 1px rgba(249,115,22,.45) inset, 0 0 70px rgba(249,115,22,.5), 0 30px 70px rgba(0,0,0,.6); }
+        #d-after .t2 { color: #F97316; }
+      </style>
+      <div id="root" data-composition-id="c-front" data-width="1080" data-height="1920">
+        <div id="d-scene">
+          <div class="d-chip" id="d-before">
+            <svg viewBox="0 0 84 84" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="42" r="32" /><path d="M42 22 V42 L56 50" /></svg>
+            <div><div class="t1">ANTES</div><div class="t2">HORAS</div></div>
+          </div>
+          <div class="d-chip" id="d-after">
+            <svg viewBox="0 0 84 84" fill="none" stroke="#F97316" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M48 8 L20 48 H40 L34 76 L64 34 H44 Z" /></svg>
+            <div><div class="t1">DEPOIS</div><div class="t2">SEGUNDOS</div></div>
+          </div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var tl = gsap.timeline({ paused: true });
+          gsap.set(".d-chip", { opacity: 0, rotationY: 38, x: -140, transformPerspective: 1400 });
+          // ANTES enters in perspective (swings in on Y)
+          tl.fromTo("#d-before", { opacity: 0, rotationY: 38, x: -140 }, { opacity: 1, rotationY: 14, x: 0, duration: 0.5, ease: "power3.out", immediateRender: false }, 1.45);
+          tl.to("#d-before", { rotationY: 20, duration: 1.05, ease: "sine.inOut" }, 1.95);
+          // swap to DEPOIS
+          tl.to("#d-before", { opacity: 0, rotationY: -30, x: 120, duration: 0.2, ease: "power3.in", overwrite: "auto" }, 3.05);
+          tl.fromTo("#d-after", { opacity: 0, rotationY: 38, x: -140, scale: 0.92 }, { opacity: 1, rotationY: 14, x: 0, scale: 1, duration: 0.5, ease: "back.out(1.6)", immediateRender: false }, 3.15);
+          tl.to("#d-after", { rotationY: 20, duration: 1.4, ease: "sine.inOut" }, 3.7);
+          window.__timelines = window.__timelines || {};
+          window.__timelines["c-front"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

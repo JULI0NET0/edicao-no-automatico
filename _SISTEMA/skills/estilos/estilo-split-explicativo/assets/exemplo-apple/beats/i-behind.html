@@ -1,0 +1,253 @@
+<!doctype html>
+<!--
+  Beat I (behind layer) — payoff poster stage, bookending the hook.
+  "CRIAR / PRODUTO" waterfalls in, gets a red hw-underline double-pass strike
+  on "ela é boa", whips out; "MERCADO / + DESEJO" builds (kinetic-center-build
+  cadence), a text-shimmer specular sweep passes once, and a beat-accent burst
+  lands on the final word — all behind the subject cutout.
+  Mounted at global 43.3 — cue constants below are GLOBAL seconds.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+        }
+        #i-stage {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          background:
+            radial-gradient(ellipse 70% 38% at 50% 78%, rgba(249, 115, 22, 0.34), rgba(249, 115, 22, 0) 70%),
+            radial-gradient(ellipse 90% 60% at 50% 30%, #1C1C1C 0%, #0A0A0A 60%, #050505 100%);
+        }
+        #i-glow {
+          position: absolute;
+          left: 90px;
+          top: 520px;
+          width: 900px;
+          height: 900px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(249, 115, 22, 0.42), rgba(249, 115, 22, 0) 65%);
+        }
+        #i-burst {
+          position: absolute;
+          left: -160px;
+          top: 260px;
+          width: 1400px;
+          height: 1400px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255, 190, 140, 0.85) 0%, rgba(249, 115, 22, 0.5) 18%, rgba(249, 115, 22, 0.16) 40%, rgba(249, 115, 22, 0) 66%);
+          opacity: 0;
+        }
+        .i-kicker {
+          position: absolute;
+          left: 0;
+          width: 1080px;
+          top: 40px;
+          text-align: center;
+          font-family: "Montserrat", sans-serif;
+          font-weight: 800;
+          font-size: 30px;
+          letter-spacing: 0.34em;
+          color: rgba(255, 255, 255, 0.55);
+        }
+        .i-block {
+          position: absolute;
+          left: 0;
+          top: 86px;
+          width: 1080px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .i-line {
+          position: relative;
+          display: flex;
+          justify-content: center;
+        }
+        .i-mask {
+          display: inline-block;
+          overflow: hidden;
+          padding: 0 2px;
+        }
+        .i-letter {
+          display: inline-block;
+          font-family: "League Gothic", sans-serif;
+          font-weight: 400;
+          line-height: 0.9;
+          color: #FFFFFF;
+          text-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+        }
+        .i-yellow .i-letter {
+          color: #F97316;
+          text-shadow: 0 0 40px rgba(249, 115, 22, 0.45), 0 18px 50px rgba(0, 0, 0, 0.55);
+        }
+        #i-strike {
+          position: absolute;
+          left: 60px;
+          top: 86px;
+          width: 960px;
+          height: 560px;
+          overflow: visible;
+        }
+        #i-strike path {
+          fill: none;
+          stroke: #F97316;
+          stroke-width: 22;
+          stroke-linecap: round;
+          filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+        }
+        #i-shimmer {
+          position: absolute;
+          left: -500px;
+          top: 60px;
+          width: 420px;
+          height: 640px;
+          background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+          transform: skewX(-16deg);
+          mix-blend-mode: overlay;
+          opacity: 0;
+        }
+      </style>
+      <div id="root" data-composition-id="i-behind" data-width="1080" data-height="1920">
+        <div id="i-stage">
+          <div id="i-glow"></div>
+          <div id="i-burst"></div>
+          <div class="i-kicker" id="i-k0">ENTÃO A APPLE</div>
+          <div class="i-kicker" id="i-k1">NÃO É BOA EM</div>
+          <div class="i-kicker" id="i-k2">ELA É BOA EM</div>
+          <div class="i-kicker" id="i-k3">ELA É BOA EM DESENVOLVER</div>
+          <div class="i-block" id="i-b1"></div>
+          <svg id="i-strike" viewBox="0 0 960 560"><path d="" /></svg>
+          <div class="i-block" id="i-b2"></div>
+          <div id="i-shimmer"></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var OFFSET = 43.3;
+          var T = function (g) {
+            return g - OFFSET;
+          };
+          var CUT = 43.33;
+          var KICK2 = 43.66; // "não é boa em"
+          var CRIAR = 44.26;
+          var PRODUTO = 44.65;
+          var STRIKE = 45.34; // "ela é boa"
+          var OUT1 = 45.84;
+          var MERCADO = 46.87;
+          var DESEJO = 47.48;
+          var SHIMMER = 47.95;
+          var HIT = 48.7;
+
+          var ctx = document.createElement("canvas").getContext("2d");
+          function fit(word, maxW, cap) {
+            var size = 900;
+            while (size > 120) {
+              ctx.font = "400 " + size + "px \"League Gothic\"";
+              if (ctx.measureText(word).width + word.length * 4 <= maxW) break;
+              size -= 4;
+            }
+            return Math.min(size, cap);
+          }
+          function line(blockId, word, cap, cls) {
+            var l = document.createElement("div");
+            l.className = "i-line" + (cls ? " " + cls : "");
+            var size = fit(word, 1000, cap);
+            var letters = word.split("").map(function (ch) {
+              var m = document.createElement("span");
+              m.className = "i-mask";
+              var s = document.createElement("span");
+              s.className = "i-letter";
+              s.textContent = ch === " " ? " " : ch;
+              s.style.fontSize = size + "px";
+              m.appendChild(s);
+              l.appendChild(m);
+              return s;
+            });
+            document.getElementById(blockId).appendChild(l);
+            return letters;
+          }
+          var L1 = line("i-b1", "CRIAR", 300);
+          var L2 = line("i-b1", "PRODUTO", 300);
+          var L3 = line("i-b2", "MERCADO", 300);
+          var L4 = line("i-b2", "+ DESEJO", 300, "i-yellow");
+
+          // hw-underline double-pass strike across both lines.
+          function hash(n, seed) {
+            var x = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453;
+            return (x - Math.floor(x)) * 2 - 1;
+          }
+          var w = function (n, r) {
+            return hash(n, 3) * r;
+          };
+          var sp = document.querySelector("#i-strike path");
+          sp.setAttribute(
+            "d",
+            "M " + (150 + w(1, 8)) + " " + (150 + w(2, 10)) + " L " + (820 + w(3, 8)) + " " + (120 + w(4, 10)) +
+              " M " + (60 + w(5, 8)) + " " + (420 + w(6, 10)) + " L " + (900 + w(7, 8)) + " " + (380 + w(8, 10)),
+          );
+          var sLen = sp.getTotalLength();
+          gsap.set(sp, { strokeDasharray: sLen, strokeDashoffset: sLen, opacity: 0 });
+
+          var tl = gsap.timeline({ paused: true });
+          gsap.set([L1, L2, L3, L4], { yPercent: 105 });
+          gsap.set([L3, L4], { opacity: 0 });
+          var K = ["#i-k0", "#i-k1", "#i-k2", "#i-k3"];
+          gsap.set(K.slice(1), { opacity: 0 });
+          function kick(i, at) {
+            K.forEach(function (k, j) {
+              tl.set(k, { opacity: j === i ? 1 : 0 }, T(at));
+            });
+          }
+
+          tl.set("#i-stage", { opacity: 1 }, T(CUT));
+          kick(1, KICK2);
+          function rise(letters, at) {
+            letters.forEach(function (l, i) {
+              tl.fromTo(l, { yPercent: 105 }, { yPercent: 0, duration: 0.3, ease: "power4.out", immediateRender: false }, T(at + i * 0.02));
+            });
+          }
+          function fall(letters, at) {
+            letters.forEach(function (l, i) {
+              tl.to(l, { yPercent: -110, duration: 0.18, ease: "power3.in" }, T(at + i * 0.02));
+            });
+          }
+          rise(L1, CRIAR - 0.06);
+          rise(L2, PRODUTO - 0.06);
+          tl.set(sp, { opacity: 1 }, T(STRIKE));
+          tl.to(sp, { strokeDashoffset: 0, duration: 0.4, ease: "power2.inOut" }, T(STRIKE));
+          kick(2, STRIKE);
+          fall(L1, OUT1);
+          fall(L2, OUT1 + 0.05);
+          tl.to(sp, { opacity: 0, duration: 0.15 }, T(OUT1 + 0.1));
+          kick(3, 46.04);
+          tl.set([L1, L2], { opacity: 0 }, T(OUT1 + 0.3));
+          tl.set(L3, { opacity: 1 }, T(MERCADO - 0.07));
+          tl.set(L4, { opacity: 1 }, T(DESEJO - 0.07));
+          rise(L3, MERCADO - 0.06);
+          rise(L4, DESEJO - 0.06);
+          // text-shimmer: one clean specular pass.
+          tl.set("#i-shimmer", { opacity: 1 }, T(SHIMMER));
+          tl.fromTo("#i-shimmer", { x: 0 }, { x: 1600, duration: 0.7, ease: "sine.inOut", immediateRender: false }, T(SHIMMER));
+          // Final beat-accent burst behind the subject.
+          tl.fromTo("#i-burst", { opacity: 0, scale: 0.35 }, { opacity: 1, scale: 1, duration: 0.1, ease: "expo.out", immediateRender: false }, T(HIT));
+          tl.to("#i-burst", { opacity: 0.3, scale: 1.2, duration: 0.6, ease: "power2.out" }, T(HIT + 0.1));
+          tl.to("#i-b2", { scale: 1.05, duration: 0.08, ease: "power2.out", transformOrigin: "50% 0%" }, T(HIT));
+          tl.to("#i-b2", { scale: 1, duration: 0.3, ease: "back.out(2)" }, T(HIT + 0.08));
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["i-behind"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

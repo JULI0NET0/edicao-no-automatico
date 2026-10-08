@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vitrine de Elementos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0A0A0A; --surface: #141414; --surface-2: #1C1C1C; --line: #282828;
+    --text: #FFFFFF; --muted: #A8A8A8; --accent: #F97316; --accent-ink: #0A0A0A;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F6F5F3; --surface: #FFFFFF; --surface-2: #EFEDEA; --line: #E2DFDA;
+      --text: #0A0A0A; --muted: #5E5E5E; --accent: #EA580C; --accent-ink: #FFFFFF;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Montserrat, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 32px 24px 140px; }
+  header { display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: end; justify-content: space-between; margin-bottom: 28px; }
+  .eyebrow { font-weight: 700; font-size: 12px; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+  h1 { font-weight: 900; font-size: clamp(30px, 5vw, 52px); letter-spacing: -.03em; line-height: 1.02; margin-top: 8px; }
+  h1 em { font-family: "Playfair Display", serif; font-style: italic; font-weight: 500; color: var(--accent); }
+  .lead { color: var(--muted); font-size: 15px; line-height: 1.55; max-width: 520px; }
+  .lead b { color: var(--text); }
+
+  .bar { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); padding: 12px 0; margin-bottom: 20px; border-bottom: 1px solid var(--line); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row + .row { margin-top: 10px; }
+  .chip { border: 1px solid var(--line); background: var(--surface); color: var(--text); font: 600 13px Montserrat, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+  .chip small { color: var(--muted); font-weight: 600; margin-left: 6px; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .chip[aria-pressed="true"] small { color: inherit; opacity: .7; }
+  .search { flex: 1 1 220px; min-width: 0; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: 500 14px Montserrat, sans-serif; padding: 10px 16px; border-radius: 999px; outline: none; }
+  .search:focus { border-color: var(--accent); }
+  select.chip { appearance: none; padding-right: 32px; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 17px) 55%, calc(100% - 12px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+  .count { color: var(--muted); font-size: 13px; font-weight: 600; margin-left: auto; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: border-color .15s; }
+  .card.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .media { position: relative; aspect-ratio: 445 / 260; background: #000; cursor: pointer; }
+  .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .media video { opacity: 0; transition: opacity .2s; }
+  .media.play video { opacity: 1; }
+  .code { position: absolute; left: 10px; top: 10px; background: rgba(10,10,10,.82); color: #fff; font: 800 12px Montserrat, sans-serif; letter-spacing: .08em; padding: 5px 9px; border-radius: 8px; }
+  .body { padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .name { font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+  .cat { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .desc { color: var(--muted); font-size: 13px; line-height: 1.45; }
+  .ask { font-size: 12.5px; line-height: 1.45; color: var(--text); background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
+  .ask span { color: var(--muted); font-weight: 600; }
+  .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 6px; }
+  .btn { flex: 1; border: 1px solid var(--line); background: transparent; color: var(--text); font: 700 12.5px Montserrat, sans-serif; padding: 9px 10px; border-radius: 10px; cursor: pointer; }
+  .btn:hover { border-color: var(--muted); }
+  .btn.pri { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .empty { color: var(--muted); padding: 60px 0; text-align: center; }
+
+  .tray { position: fixed; left: 50%; bottom: 16px; transform: translate(-50%, 140%); transition: transform .25s; width: min(960px, calc(100% - 32px)); background: var(--surface-2); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,.35); z-index: 10; }
+  .tray.on { transform: translate(-50%, 0); }
+  .tray code { flex: 1; min-width: 0; font: 600 13px ui-monospace, Menlo, monospace; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tray .btn { flex: 0 0 auto; }
+  .toast { position: fixed; left: 50%; top: 20px; transform: translate(-50%, -80px); background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 13px; padding: 10px 16px; border-radius: 999px; transition: transform .2s; z-index: 20; }
+  .toast.on { transform: translate(-50%, 0); }
+  @media (max-width: 600px) {
+    .wrap { padding: 20px 16px 150px; }
+    .tray { flex-wrap: wrap; } .tray code { flex-basis: 100%; }
+    .count { margin-left: 0; }
+    #cats { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+    #cats::-webkit-scrollbar { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Edição no Automático · 4-ELEMENTOS</div>
+      <h1>Os 108 <em>elementos</em></h1>
+    </div>
+    <p class="lead">Passe o mouse para ver o elemento em movimento. Copie o pedido e cole no Claude Code, ou <b>selecione vários</b> e copie tudo de uma vez. No seu vídeo entram as cores do seu <b>MANUAL-DA-MARCA</b>.</p>
+  </header>
+
+  <div class="bar">
+    <div class="row" id="cats"></div>
+    <div class="row">
+      <input class="search" id="q" type="search" placeholder="Buscar: legenda, mapa, 3D, glitch…" aria-label="Buscar elemento" />
+      <select class="chip" id="ctx" aria-label="Filtrar por tipo de vídeo">
+        <option value="">Todo tipo de vídeo</option>
+        <option value="reel-falando">Reel falando pra câmera</option>
+        <option value="so-voz">Só a voz (minimalista)</option>
+        <option value="aula">Aula / tutorial</option>
+        <option value="cliente">Cliente / agência</option>
+        <option value="anuncio">Anúncio / lançamento</option>
+      </select>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="tray" id="tray" role="region" aria-label="Elementos selecionados">
+  <code id="trayText"></code>
+  <button class="btn" id="clear">Limpar</button>
+  <button class="btn pri" id="copyAll">Copiar pedido</button>
+</div>
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+const CAT = /*__CATALOGO__*/[];
+const $ = (s) => document.querySelector(s);
+const state = { cat: "", ctx: "", q: "", sel: new Set() };
+try { state.sel = new Set(JSON.parse(localStorage.getItem("vitrine-sel") || "[]")); } catch (e) {}
+const save = () => { try { localStorage.setItem("vitrine-sel", JSON.stringify([...state.sel])); } catch (e) {} };
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pedido = (e) => `usa ${e.codigo} (${e.nome})` + (e.pedir ? ` — ${e.pedir}` : "");
+const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+// filtros de categoria
+const cats = [...new Map(CAT.map((e) => [e.prefixo, e.categoria])).entries()];
+$("#cats").innerHTML = `<button class="chip" data-c="" aria-pressed="true">Todos<small>${CAT.length}</small></button>` +
+  cats.map(([p, n]) => `<button class="chip" data-c="${p}" aria-pressed="false">${esc(n)}<small>${p}</small></button>`).join("");
+$("#cats").addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-c]"); if (!b) return;
+  state.cat = b.dataset.c;
+  document.querySelectorAll("#cats .chip").forEach((c) => c.setAttribute("aria-pressed", c === b));
+  render();
+});
+$("#q").addEventListener("input", (e) => { state.q = norm(e.target.value.trim()); render(); });
+$("#ctx").addEventListener("change", (e) => { state.ctx = e.target.value; render(); });
+
+function render() {
+  const lista = CAT.filter((e) =>
+    (!state.cat || e.prefixo === state.cat) &&
+    (!state.ctx || e.contextos.includes(state.ctx)) &&
+    (!state.q || norm([e.codigo, e.nome, e.categoria, e.oque, e.base, e.pedir].join(" ")).includes(state.q)));
+  $("#count").textContent = `${lista.length} de ${CAT.length}`;
+  $("#grid").innerHTML = lista.length ? lista.map((e) => `
+    <article class="card${state.sel.has(e.codigo) ? " sel" : ""}" data-k="${e.codigo}">
+      <div class="media" data-src="${e.pasta}/preview.mp4">
+        <img src="${e.pasta}/poster.jpg" alt="${esc(e.nome)}" loading="lazy" />
+        <span class="code">${e.codigo}</span>
+      </div>
+      <div class="body">
+        <div class="cat">${esc(e.categoria)}</div>
+        <div class="name">${esc(e.nome)}</div>
+        <div class="desc">${esc(e.oque)}</div>
+        ${e.pedir ? `<div class="ask"><span>Você informa:</span> ${esc(e.pedir)}</div>` : ""}
+        <div class="actions">
+          <button class="btn" data-a="sel">${state.sel.has(e.codigo) ? "Selecionado ✓" : "Selecionar"}</button>
+          <button class="btn pri" data-a="copy">Copiar pedido</button>
+        </div>
+      </div>
+    </article>`).join("") : `<p class="empty">Nenhum elemento com esse filtro.</p>`;
+  tray();
+}
+
+// preview em movimento: hover no desktop, toque no celular
+function play(m, on) {
+  let v = m.querySelector("video");
+  if (on && !v) { v = document.createElement("video"); Object.assign(v, { src: m.dataset.src, muted: true, loop: true, playsInline: true }); v.setAttribute("muted", ""); m.appendChild(v); }
+  if (!v) return;
+  m.classList.toggle("play", on);
+  on ? v.play().catch(() => {}) : v.pause();
+}
+$("#grid").addEventListener("mouseover", (e) => { const m = e.target.closest(".media"); if (m) play(m, true); });
+$("#grid").addEventListener("mouseout", (e) => { const m = e.target.closest(".media"); if (m && !m.contains(e.relatedTarget)) play(m, false); });
+
+$("#grid").addEventListener("click", (ev) => {
+  const card = ev.target.closest(".card"); if (!card) return;
+  const e = CAT.find((x) => x.codigo === card.dataset.k);
+  const a = ev.target.closest("[data-a]")?.dataset.a;
+  if (ev.target.closest(".media")) { const m = card.querySelector(".media"); play(m, !m.classList.contains("play")); return; }
+  if (a === "copy") copy(pedido(e));
+  if (a === "sel") { state.sel.has(e.codigo) ? state.sel.delete(e.codigo) : state.sel.add(e.codigo); save(); render(); }
+});
+
+function tray() {
+  const itens = CAT.filter((e) => state.sel.has(e.codigo));
+  $("#tray").classList.toggle("on", itens.length > 0);
+  $("#trayText").textContent = itens.length ? "usa " + itens.map((e) => `${e.codigo} (${e.nome})`).join(", ") : "";
+}
+$("#clear").onclick = () => { state.sel.clear(); save(); render(); };
+$("#copyAll").onclick = () => {
+  const itens = CAT.filter((e) => state.sel.has(e.codigo));
+  copy("Neste vídeo, usa estes elementos de 4-ELEMENTOS:\n" + itens.map((e) => `- ${pedido(e)}`).join("\n"));
+};
+
+let tt;
+function copy(txt) {
+  const done = () => { $("#toast").classList.add("on"); clearTimeout(tt); tt = setTimeout(() => $("#toast").classList.remove("on"), 1400); };
+  (navigator.clipboard?.writeText(txt) || Promise.reject()).then(done).catch(() => {
+    const t = document.createElement("textarea"); t.value = txt; document.body.appendChild(t); t.select();
+    try { document.execCommand("copy"); done(); } catch (e) {} t.remove();
+  });
+}
+render();
+</script>
+</body>
+</html>

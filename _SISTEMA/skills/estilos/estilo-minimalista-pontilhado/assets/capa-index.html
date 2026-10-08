@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=1080, height=1920"/>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="lib/dots.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}html,body{width:1080px;height:1920px;overflow:hidden;background:#0a0a0a}
+#root{position:relative;width:1080px;height:1920px;font-family:Montserrat,sans-serif}
+.f{position:absolute;inset:0;background:#0a0a0a}.f svg{position:absolute;inset:0}
+.t{position:absolute;left:60px;right:60px;text-align:center;color:#fff;font-weight:800;letter-spacing:-.02em;line-height:1.02}
+.k{color:#f97316;font-family:"Playfair Display",serif;font-style:italic;font-weight:500;letter-spacing:0}
+.s{position:absolute;left:0;right:0;text-align:center;color:#a8a8a8;font-weight:700;letter-spacing:.08em;font-size:34px}
+</style></head><body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="3" data-width="1080" data-height="1920">
+ <div id="a" class="f clip" data-start="0" data-duration="1" data-track-index="0"><svg width="1080" height="1920"></svg>
+  <div class="t" style="top:380px;font-size:104px">Não é uma briga <span class="k" style="font-size:124px">justa</span></div>
+  <div class="s" style="top:1620px">{{HANDLE}}</div></div>
+ <div id="b" class="f clip" data-start="1" data-duration="1" data-track-index="0"><svg width="1080" height="1920"></svg>
+  <div class="t" style="top:1280px;font-size:92px">Quem não usa IA<br><span class="k" style="font-size:112px">perde a vaga</span></div>
+  <div class="s" style="top:1640px">{{HANDLE}}</div></div>
+ <div id="c" class="f clip" data-start="2" data-duration="1" data-track-index="0"><svg width="1080" height="1920"></svg>
+  <div class="t" style="top:1200px;font-size:96px">Você está do lado<br>da <span class="k" style="font-size:118px">vantagem?</span></div>
+  <div class="s" style="top:1640px">{{HANDLE}}</div></div>
+</div>
+<script>
+const {fill,stroke,text,draw,grid,rand,SHAPES,WHITE,ORANGE}=DOTS;const sv=id=>document.querySelector('#'+id+' svg');
+// A: balança despencando p/ o lado laranja
+(function(){const s=sv('a');grid(s,{opacity:.07});const BX=540,BY=1010,BL=340,H=200,a=-18*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a);
+const lx=BX-BL*ca,ly=BY-BL*sa,rx=BX+BL*ca,ry=BY+BL*sa;
+draw(s,fill(SHAPES.scaleBase,{step:12,ox:340,oy:980}),{r:3.4});
+const beam=[];for(let i=0;i<52;i++){const t=i/51;beam.push({x:lx+(rx-lx)*t,y:ly+(ry-ly)*t})}draw(s,beam,{r:4});draw(s,[{x:BX,y:BY,r:12}]);
+[[lx,ly],[rx,ry]].forEach(([x,y])=>draw(s,stroke(`M${x},${y} L${x-75},${y+H} M${x},${y} L${x+75},${y+H}`,{gap:15}),{r:2.2,opacity:.6}));
+const pan=fill(SHAPES.pan,{step:11});draw(s,pan.map(p=>({x:p.x+lx,y:p.y+ly+H})),{r:3.2,color:ORANGE});draw(s,pan.map(p=>({x:p.x+rx,y:p.y+ry+H})),{r:3.2});
+const R=rand(3);for(let i=0;i<90;i++){const t=R(),u=R();draw(s,[{x:lx+(t-.5)*130,y:ly+H-6-u*72*(1-Math.abs(t-.5)*1.6)}],{r:3.4,color:ORANGE})}})();
+// B: fila de bonecos, 1 laranja com ponto, resto apagado
+(function(){const s=sv('b');grid(s,{opacity:.07});const g=196,x0=540-2*g-82,y0=700;
+for(let k=0;k<5;k++){if(k===2)draw(s,fill(SHAPES.person,{step:13,ox:x0+k*g,oy:y0,s:.82}),{r:3.6,color:ORANGE});else draw(s,stroke(SHAPES.person,{gap:15,ox:x0+k*g,oy:y0,s:.82}),{r:2.4,opacity:.4})}
+draw(s,stroke('M80,1050 L1000,1050',{gap:16}),{r:2,opacity:.35});draw(s,text('VAGA',{size:110,step:7,cx:540,cy:520}),{r:2.6,opacity:.9})})();
+// C: boneco único laranja + cadeira
+(function(){const s=sv('c');grid(s,{opacity:.07});
+draw(s,fill(SHAPES.person,{step:13,ox:260,oy:430,s:1.5}),{r:3.8,color:ORANGE});
+draw(s,fill(SHAPES.chair,{step:12,ox:600,oy:430+600-465,s:1.55}),{r:3.6});
+draw(s,[{x:260+100*1.5,y:430+180*1.5,r:15,c:ORANGE}].map(p=>({...p,color:WHITE})),{r:7});
+draw(s,stroke('M80,1045 L1000,1045',{gap:16}),{r:2,opacity:.35})})();
+window.__timelines={main:gsap.timeline({paused:true})};
+</script></body></html>
