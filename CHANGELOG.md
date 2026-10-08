@@ -1,5 +1,8 @@
 # Novidades
 
+## 1.0.1
+- Instalação mais limpa: esconde avisos de itens opcionais
+
 ## 1.0.0
 - Primeira versão pública.
 - 16 skills: `/comecar`, marca, preparar projeto, limpar bruto, revisar e entregar, criar estilo, 7 estilos e 3 peças.

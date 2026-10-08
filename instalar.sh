@@ -42,7 +42,7 @@ mkdir -p _SISTEMA/skills/meus-estilos 0-MARCA/assets 1-MATERIAIS-PARA-EDITAR 2-A
 
 # 5. ambiente de render (Chrome do HyperFrames)
 echo; echo "→ checando o ambiente de render"
-npx --yes "$HF" doctor 2>&1 | grep -v -i "docker\|Some checks failed" | tail -10 || true
+npx --yes "$HF" doctor 2>&1 | grep -v -i "docker\|Some checks failed\|optional" | tail -10 || true
 echo "  (Docker não é necessário: só serve para render na nuvem.)"
 
 echo
