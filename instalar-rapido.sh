@@ -7,6 +7,10 @@
 # Se a pasta já existir, só atualiza (não apaga nada seu).
 set -euo pipefail
 
+# Tudo dentro de uma função. Com `curl | bash`, o bash lê o script pelo pipe e comandos internos
+# (git, npm, npx) poderiam consumir o resto dele. Assim o script é lido inteiro antes de rodar.
+main() {
+
 REPO="${EDICAO_REPO:-https://github.com/JULI0NET0/edicao-no-automatico.git}"
 DESTINO="${DESTINO:-$HOME/edicao-no-automatico}"
 ABRIR_PAINEL="${ABRIR_PAINEL:-1}"
@@ -77,3 +81,6 @@ if [ "$ABRIR_PAINEL" = 1 ] && [ -t 1 ]; then
   laranja "→ Abrindo o painel (Ctrl+C para fechar)"
   npm run --silent hyperframes
 fi
+}
+
+main "$@"

@@ -1,6 +1,6 @@
 {
   "name": "edicao-no-automatico",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "type": "module",
   "description": "Framework de edição de vídeo com IA: painel, editor HyperFrames, 108 elementos e catálogo.",

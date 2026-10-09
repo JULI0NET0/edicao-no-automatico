@@ -72,4 +72,4 @@ Mais detalhes em [COMECE-AQUI.md](COMECE-AQUI.md).
 
 ## Licença
 
-Uso pessoal para criar os seus vídeos e os dos seus clientes. Não é permitido revender ou redistribuir o framework. Veja [LICENSE](LICENSE). Construído sobre o [HyperFrames](https://hyperframes.heygen.com) (licença própria).
+Uso pessoal para criar os seus vídeos e os dos seus clientes. Não é permitido revender ou redistribuir o framework. Veja [LICENSE](LICENSE). Construído sobre o [HyperFrames](https://hyperframes.heygen.com) (Apache 2.0).

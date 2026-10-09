@@ -1,5 +1,8 @@
 # Novidades
 
+## 1.0.2
+- Corrige a instalação com curl | bash e a licença no README
+
 ## 1.0.1
 - Instalação mais limpa: esconde avisos de itens opcionais
 
